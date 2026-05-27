@@ -1,0 +1,1825 @@
+<!doctype html>
+<html lang="ru">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover" />
+<title>Гарвардская тарелка — визуальный AI-конструктор питания</title>
+<meta name="description" content="Тёплый визуальный конструктор Гарвардской тарелки: соберите сбалансированный обед под свою цель, предпочтения и взгляд ТКМ. Без подсчёта калорий, только смысл и баланс." />
+<meta name="theme-color" content="#f5efe6" />
+<meta property="og:type" content="website" />
+<meta property="og:title" content="Гарвардская тарелка — визуальный AI-конструктор питания" />
+<meta property="og:description" content="Соберите тёплую, сбалансированную тарелку под свою цель и предпочтения. Визуально, без счётчика калорий." />
+<meta property="og:locale" content="ru_RU" />
+<link rel="icon" href="data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><circle cx='16' cy='16' r='14' fill='%23ead9b8'/><path d='M2 18a14 14 0 0028 0z' fill='%237a8a4f'/><circle cx='16' cy='16' r='14' fill='none' stroke='%2336322a' stroke-width='1.5'/></svg>" />
+<style>
+  @import url('https://api.fontshare.com/v2/css?f[]=general-sans@400,500,600&f[]=fraunces@400,500,600&display=swap');
+
+  :root{
+    --bg:#f5efe6;
+    --bg-2:#efe6d6;
+    --paper:#fbf6ec;
+    --ink:#36322a;
+    --ink-2:#5b554a;
+    --ink-3:#8a8377;
+    --line:#e3d8c2;
+    --line-2:#d4c6a8;
+    --accent:#7a8a4f;       /* warm olive */
+    --accent-2:#5e6f3a;
+    --terra:#c4623f;        /* terracotta */
+    --terra-2:#a14a2a;
+    --honey:#d4a04a;
+    --cream:#f0e3c8;
+    --berry:#8a4a5c;
+    --warm:#c4623f;
+    --neutral:#b8a87a;
+    --cool:#5d8a96;
+    --ok:#6b8e3a;
+    --soft:#e8d8b8;
+    --shadow:0 1px 2px rgba(54,50,42,.06), 0 8px 28px rgba(54,50,42,.08);
+    --shadow-lg:0 4px 16px rgba(54,50,42,.08), 0 24px 60px rgba(54,50,42,.12);
+    --radius:18px;
+    --radius-sm:12px;
+    --radius-lg:24px;
+    --font-display:'Fraunces', Georgia, 'Times New Roman', serif;
+    --font-body:'General Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  }
+
+  *{box-sizing:border-box}
+  html,body{margin:0;padding:0}
+  body{
+    font-family:var(--font-body);
+    background:var(--bg);
+    color:var(--ink);
+    -webkit-font-smoothing:antialiased;
+    -moz-osx-font-smoothing:grayscale;
+    font-size:16px;
+    line-height:1.5;
+    min-height:100vh;
+    overflow-x:hidden;
+  }
+  h1,h2,h3,h4{font-family:var(--font-display);font-weight:500;letter-spacing:-0.01em;margin:0}
+  h1{font-size:28px;line-height:1.15}
+  h2{font-size:22px;line-height:1.2}
+  h3{font-size:18px;line-height:1.25}
+  p{margin:0}
+  button{font-family:inherit;cursor:pointer;border:none;background:none;color:inherit;font-size:inherit}
+  button:focus-visible{outline:2px solid var(--accent);outline-offset:2px;border-radius:8px}
+
+  /* Layout */
+  .app{
+    max-width:1180px;
+    margin:0 auto;
+    padding:16px 16px 120px;
+  }
+  @media(min-width:760px){
+    .app{padding:28px 32px 80px}
+    h1{font-size:36px}
+    h2{font-size:26px}
+  }
+
+  /* Header */
+  .topbar{
+    display:flex;align-items:center;justify-content:space-between;
+    padding:6px 4px 18px;
+  }
+  .brand{display:flex;align-items:center;gap:10px}
+  .brand-mark{width:36px;height:36px;color:var(--ink)}
+  .brand-name{font-family:var(--font-display);font-weight:500;font-size:18px;letter-spacing:-0.01em}
+  .brand-sub{font-size:11px;color:var(--ink-3);letter-spacing:0.08em;text-transform:uppercase}
+  .profile-btn{
+    padding:8px 14px;border-radius:999px;background:var(--paper);border:1px solid var(--line);
+    font-size:13px;color:var(--ink-2);display:flex;align-items:center;gap:8px;
+  }
+  .profile-btn:hover{background:var(--bg-2)}
+
+  /* Tabs */
+  .tabs{
+    display:flex;gap:6px;background:var(--paper);
+    border:1px solid var(--line);border-radius:999px;padding:5px;
+    margin:8px 0 24px;overflow-x:auto;-webkit-overflow-scrolling:touch;
+    scrollbar-width:none;
+  }
+  .tabs::-webkit-scrollbar{display:none}
+  .tab{
+    flex:1 1 auto;white-space:nowrap;
+    padding:10px 16px;border-radius:999px;
+    font-size:14px;color:var(--ink-2);font-weight:500;
+    transition:all .2s ease;
+    text-align:center;min-width:max-content;
+  }
+  .tab[aria-selected="true"]{background:var(--ink);color:var(--paper)}
+  .tab:not([aria-selected="true"]):hover{background:var(--bg-2)}
+
+  /* Layout grid */
+  .grid{display:grid;grid-template-columns:minmax(0,1fr);gap:20px}
+  .grid > *{min-width:0}
+  @media(min-width:960px){
+    .grid{grid-template-columns:minmax(0,1.05fr) minmax(0,.95fr);gap:32px;align-items:start}
+    .grid-balanced{grid-template-columns:1fr 1fr}
+  }
+
+  /* Cards */
+  .card{
+    background:var(--paper);border:1px solid var(--line);
+    border-radius:var(--radius);padding:20px;
+    box-shadow:var(--shadow);
+  }
+  .card-soft{background:var(--bg-2);border-color:transparent;box-shadow:none}
+  .card h2{margin-bottom:10px}
+  .card-title{display:flex;justify-content:space-between;align-items:center;gap:12px;margin-bottom:14px}
+  .card-title h2{margin:0}
+  .muted{color:var(--ink-3);font-size:13px}
+  .small{font-size:12px}
+
+  /* Plate */
+  .plate-wrap{
+    position:relative;width:100%;max-width:520px;margin:0 auto;
+    aspect-ratio:1/1;
+  }
+  .plate{
+    position:absolute;inset:0;border-radius:50%;
+    background:radial-gradient(circle at 35% 30%, #fff 0%, var(--paper) 50%, #f3e9d4 100%);
+    border:1px solid var(--line-2);
+    box-shadow:0 2px 6px rgba(54,50,42,.06), 0 30px 60px -20px rgba(54,50,42,.18), inset 0 0 0 12px rgba(255,255,255,.4), inset 0 0 0 13px var(--line);
+    overflow:hidden;
+  }
+  .plate-svg{position:absolute;inset:0;width:100%;height:100%;pointer-events:none}
+  .zone{
+    position:absolute;display:flex;flex-wrap:wrap;align-content:center;justify-content:center;
+    gap:6px;padding:34px 16px 16px;
+    transition:background .25s ease;
+  }
+  .zone-veg{padding:34px 14px 16px 24px;justify-content:center;align-content:center}
+  .zone-protein{padding:46px 30px 14px 14px}
+  .zone-carb{padding:14px 50% 36px 18px;align-content:flex-start;justify-content:flex-start}
+  .zone-extras{padding:14px}
+  .zone-veg{top:0;left:0;width:50%;height:100%;border-top-left-radius:50%;border-bottom-left-radius:50%}
+  .zone-protein{top:0;left:50%;width:50%;height:50%;border-top-right-radius:50%}
+  .zone-carb{top:50%;left:50%;width:50%;height:50%;border-bottom-right-radius:50%}
+  .zone-extras{
+    position:absolute;right:-4px;bottom:-4px;width:34%;height:34%;border-radius:50%;
+    background:radial-gradient(circle at 35% 30%, #fff 0%, var(--paper) 60%, var(--cream) 100%);
+    border:1px solid var(--line-2);
+    box-shadow:0 2px 6px rgba(54,50,42,.06), 0 18px 36px -10px rgba(54,50,42,.22), inset 0 0 0 8px rgba(255,255,255,.4), inset 0 0 0 9px var(--line);
+    display:flex;flex-wrap:wrap;align-content:center;justify-content:center;gap:4px;padding:10px;
+    z-index:2;
+  }
+  .zone.drag-over{background:rgba(122,138,79,.16)}
+  .zone-label{
+    position:absolute;font-size:10px;font-weight:500;letter-spacing:0.08em;
+    text-transform:uppercase;color:var(--ink-3);pointer-events:none;
+    background:rgba(251,246,236,.85);padding:3px 8px;border-radius:999px;
+    backdrop-filter:blur(4px);
+  }
+  .lbl-veg{top:14px;left:24%;transform:translateX(-50%);z-index:4}
+  .lbl-protein{top:14px;left:72%;transform:translateX(-50%);z-index:4}
+  .lbl-carb{bottom:18px;left:30%;transform:translateX(-50%);z-index:4}
+  @media(max-width:500px){
+    .zone-label{font-size:9px;padding:2px 6px}
+    .lbl-veg{left:18%}
+    .lbl-protein{left:74%}
+    .lbl-carb{left:28%;bottom:14px}
+    .lbl-extras{font-size:8px}
+  }
+  .lbl-extras{
+    position:absolute;bottom:8px;right:8px;z-index:3;font-size:9px;
+    color:var(--ink-3);background:rgba(251,246,236,.85);padding:2px 6px;border-radius:999px;
+  }
+
+  /* Tokens on plate */
+  .plate-item{
+    display:inline-flex;align-items:center;gap:5px;
+    padding:5px 9px 5px 7px;
+    background:var(--paper);border:1px solid var(--line);
+    border-radius:999px;font-size:11px;color:var(--ink);
+    cursor:pointer;user-select:none;
+    box-shadow:0 1px 3px rgba(54,50,42,.08);
+    transition:transform .15s ease, background .2s;
+    line-height:1;max-width:140px;
+  }
+  .plate-item.veg{background:#e9efd6}
+  .plate-item.protein{background:#f3dccc}
+  .plate-item.carb{background:#f0e0c0}
+  .plate-item.extras{background:#f7e9d2}
+  .plate-item:hover{transform:translateY(-1px)}
+  .plate-item .emoji{font-size:13px;line-height:1}
+  .plate-item .nm{white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:80px}
+  .plate-item .portion-dot{
+    display:inline-block;width:6px;height:6px;border-radius:50%;background:var(--ink-3);
+  }
+  .plate-item .portion-dot.s{background:#c9c0aa}
+  .plate-item .portion-dot.m{background:#7a8a4f}
+  .plate-item .portion-dot.l{background:#5e6f3a}
+  .plate-item[draggable="true"]{cursor:grab}
+  .plate-item.dragging{opacity:.4}
+  .plate-empty{
+    color:#b8aa86;font-size:10.5px;font-style:italic;align-self:center;
+    text-align:center;padding:8px;line-height:1.3;opacity:.85;
+  }
+
+  /* Library */
+  .cat-tabs{
+    display:flex;gap:6px;overflow-x:auto;padding-bottom:6px;margin-bottom:14px;
+    scrollbar-width:none;
+  }
+  .cat-tabs::-webkit-scrollbar{display:none}
+  .cat-tab{
+    flex:0 0 auto;padding:8px 14px;border-radius:999px;
+    background:var(--bg-2);border:1px solid transparent;
+    font-size:13px;color:var(--ink-2);font-weight:500;
+  }
+  .cat-tab[aria-selected="true"]{background:var(--ink);color:var(--paper)}
+
+  .search-wrap{
+    position:relative;margin-bottom:12px;
+  }
+  .search-input{
+    width:100%;padding:11px 14px 11px 38px;border-radius:12px;
+    border:1px solid var(--line);background:var(--paper);
+    font-family:inherit;font-size:14px;color:var(--ink);
+  }
+  .search-input:focus{outline:none;border-color:var(--accent)}
+  .search-icon{
+    position:absolute;left:13px;top:50%;transform:translateY(-50%);
+    color:var(--ink-3);width:16px;height:16px;
+  }
+
+  .chips{display:flex;flex-wrap:wrap;gap:6px;max-height:340px;overflow-y:auto;padding:4px 2px}
+  @media(min-width:760px){.chips{max-height:none}}
+  .chip{
+    display:inline-flex;align-items:center;gap:6px;
+    padding:7px 11px 7px 9px;border-radius:999px;
+    background:var(--paper);border:1px solid var(--line);
+    font-size:13px;color:var(--ink);font-family:inherit;
+    transition:all .15s ease;
+  }
+  .chip:hover{border-color:var(--accent);background:#fcf8f0}
+  .chip .emoji{font-size:14px;line-height:1}
+  .chip .plus{color:var(--accent);font-weight:600;margin-left:2px}
+  .chip.fav{background:#f4ead4;border-color:#e4c98e}
+  .chip.disabled{opacity:.4;cursor:not-allowed;text-decoration:line-through}
+  .chip.disabled:hover{border-color:var(--line)}
+
+  /* Score panel */
+  .scores{display:flex;flex-direction:column;gap:14px}
+  .score{display:flex;flex-direction:column;gap:6px}
+  .score-row{display:flex;justify-content:space-between;align-items:baseline;gap:8px}
+  .score-name{font-size:13px;font-weight:500;color:var(--ink)}
+  .score-val{font-size:13px;color:var(--ink-2);font-variant-numeric:tabular-nums}
+  .bar{
+    height:8px;border-radius:999px;background:#eadfc6;overflow:hidden;position:relative;
+  }
+  .bar-fill{
+    height:100%;border-radius:999px;background:linear-gradient(90deg,var(--accent),var(--accent-2));
+    transition:width .5s cubic-bezier(.2,.7,.2,1);
+  }
+  .bar-fill.warm{background:linear-gradient(90deg,#e8a36b,var(--terra))}
+  .bar-fill.cool{background:linear-gradient(90deg,#9ec1cd,var(--cool))}
+  .bar-fill.gut{background:linear-gradient(90deg,#c4d68a,var(--accent))}
+  .bar-fill.sat{background:linear-gradient(90deg,#e9c98a,var(--honey))}
+  .bar-fill.fib{background:linear-gradient(90deg,#b8d18e,var(--accent))}
+
+  /* Insights */
+  .insight-list{display:flex;flex-direction:column;gap:8px;margin-top:4px}
+  .insight{
+    display:flex;align-items:flex-start;gap:10px;
+    padding:10px 12px;border-radius:12px;
+    background:var(--bg-2);font-size:13px;color:var(--ink-2);line-height:1.4;
+  }
+  .insight.good{background:#e9efd6}
+  .insight.warn{background:#f5e6d0}
+  .insight.tip{background:#eee4d0}
+  .insight-dot{
+    flex:0 0 auto;width:8px;height:8px;border-radius:50%;margin-top:6px;
+    background:var(--accent);
+  }
+  .insight.good .insight-dot{background:var(--ok)}
+  .insight.warn .insight-dot{background:var(--terra)}
+  .insight.tip .insight-dot{background:var(--honey)}
+
+  /* Quick actions */
+  .quick-actions{display:flex;flex-wrap:wrap;gap:8px;margin-top:14px}
+  .qa-btn{
+    padding:9px 14px;border-radius:999px;
+    background:var(--paper);border:1px solid var(--line);
+    font-size:13px;color:var(--ink);font-weight:500;
+    transition:all .15s ease;
+  }
+  .qa-btn:hover{background:var(--ink);color:var(--paper);border-color:var(--ink)}
+
+  /* TCM block */
+  .tcm{
+    margin-top:14px;padding:14px 16px;border-radius:14px;
+    background:linear-gradient(135deg,#f5e9d0 0%, #f0dcb8 100%);
+    border:1px solid var(--line-2);
+  }
+  .tcm-title{
+    font-family:var(--font-display);font-size:15px;font-weight:500;
+    display:flex;align-items:center;gap:8px;margin-bottom:6px;
+  }
+  .tcm-body{font-size:13px;color:var(--ink-2);line-height:1.5}
+
+  /* Thermal dot */
+  .therm{
+    display:inline-block;width:6px;height:6px;border-radius:50%;margin-right:5px;
+    vertical-align:middle;
+  }
+  .therm.warming{background:var(--warm)}
+  .therm.neutral{background:var(--neutral)}
+  .therm.cooling{background:var(--cool)}
+
+  /* Onboarding */
+  .modal{
+    position:fixed;inset:0;background:rgba(54,50,42,.5);
+    z-index:50;display:none;align-items:flex-start;justify-content:center;
+    padding:16px;overflow-y:auto;backdrop-filter:blur(8px);
+  }
+  .modal.open{display:flex}
+  .modal-panel{
+    background:var(--paper);border-radius:24px;
+    width:100%;max-width:560px;margin:24px 0;
+    padding:24px;box-shadow:var(--shadow-lg);
+    border:1px solid var(--line);
+  }
+  @media(min-width:600px){.modal-panel{padding:32px}}
+  .step-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:18px}
+  .step-progress{font-size:12px;color:var(--ink-3);letter-spacing:0.06em;text-transform:uppercase}
+  .step-close{padding:6px 10px;font-size:13px;color:var(--ink-3);border-radius:8px}
+  .step-close:hover{background:var(--bg-2);color:var(--ink)}
+  .step h2{font-size:24px;margin-bottom:8px}
+  .step .lead{color:var(--ink-2);font-size:14px;margin-bottom:18px}
+  .opt-grid{display:grid;grid-template-columns:1fr;gap:10px;margin-bottom:18px}
+  @media(min-width:520px){.opt-grid.cols-2{grid-template-columns:1fr 1fr}}
+  .opt{
+    display:flex;align-items:flex-start;gap:12px;
+    padding:14px 16px;border-radius:14px;
+    background:var(--bg-2);border:1px solid transparent;
+    text-align:left;font-size:14px;color:var(--ink);
+    transition:all .15s ease;
+  }
+  .opt:hover{background:#ece2cc}
+  .opt[aria-pressed="true"]{background:var(--paper);border-color:var(--accent);box-shadow:inset 0 0 0 1px var(--accent)}
+  .opt .opt-emoji{font-size:20px;line-height:1}
+  .opt-text{display:flex;flex-direction:column;gap:2px;flex:1}
+  .opt-name{font-weight:500}
+  .opt-desc{font-size:12px;color:var(--ink-3);line-height:1.3}
+  .step-actions{display:flex;justify-content:space-between;gap:10px;margin-top:8px}
+  .btn{
+    padding:12px 22px;border-radius:999px;
+    background:var(--ink);color:var(--paper);
+    font-weight:500;font-size:14px;
+    transition:all .15s ease;
+  }
+  .btn:hover{background:#1f1d18}
+  .btn-ghost{background:transparent;color:var(--ink-2)}
+  .btn-ghost:hover{background:var(--bg-2);color:var(--ink)}
+  .btn-secondary{background:var(--paper);color:var(--ink);border:1px solid var(--line)}
+  .btn-secondary:hover{background:var(--bg-2)}
+
+  .demo-row{display:flex;flex-wrap:wrap;gap:8px;margin:8px 0 18px}
+  .demo-chip{
+    padding:9px 14px;border-radius:999px;background:#f4ead4;
+    border:1px solid #e4c98e;font-size:13px;color:var(--ink);font-weight:500;
+  }
+  .demo-chip:hover{background:#eadcb8}
+
+  /* Improve tab */
+  .improve-current{margin-bottom:18px}
+  .improve-suggestion{
+    padding:14px 16px;border-radius:14px;background:var(--bg-2);
+    margin-bottom:10px;display:flex;flex-direction:column;gap:8px;
+  }
+  .improve-suggestion h4{font-size:14px;font-weight:500;font-family:var(--font-body);margin:0}
+  .improve-suggestion .add-row{display:flex;flex-wrap:wrap;gap:6px}
+
+  /* Ideas */
+  .pantry{
+    display:flex;flex-wrap:wrap;gap:6px;margin-bottom:14px;
+    padding:14px;background:var(--bg-2);border-radius:14px;
+  }
+  .pantry-empty{font-size:13px;color:var(--ink-3)}
+  .idea-card{
+    padding:16px 18px;border-radius:18px;background:var(--paper);
+    border:1px solid var(--line);margin-bottom:12px;box-shadow:var(--shadow);
+  }
+  .idea-card h3{margin-bottom:10px;font-size:17px}
+  .idea-items{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:10px}
+  .idea-reasons{font-size:13px;color:var(--ink-2);line-height:1.45;margin-bottom:8px}
+  .idea-mini-scores{display:flex;flex-wrap:wrap;gap:10px;font-size:12px;color:var(--ink-3)}
+  .idea-mini-scores span{display:inline-flex;align-items:center;gap:5px}
+
+  /* Sections */
+  .section-block{margin-bottom:18px}
+  .section-block:last-child{margin-bottom:0}
+  .section-block h3{margin-bottom:8px;font-size:15px;font-family:var(--font-body);font-weight:600;color:var(--ink)}
+
+  /* Portion popover */
+  .portion-popover{
+    position:fixed;z-index:60;background:var(--paper);
+    border:1px solid var(--line);border-radius:14px;padding:8px;
+    box-shadow:var(--shadow-lg);display:none;flex-direction:column;gap:4px;min-width:180px;
+  }
+  .portion-popover.open{display:flex}
+  .portion-popover button{
+    padding:8px 12px;text-align:left;border-radius:8px;font-size:13px;
+    display:flex;justify-content:space-between;gap:10px;
+  }
+  .portion-popover button:hover{background:var(--bg-2)}
+  .portion-popover button[aria-pressed="true"]{background:var(--ink);color:var(--paper)}
+  .portion-popover .pop-sep{height:1px;background:var(--line);margin:4px 0}
+  .portion-popover .pop-action{color:var(--terra-2)}
+
+  /* Toast */
+  .toast{
+    position:fixed;bottom:24px;left:50%;transform:translateX(-50%) translateY(20px);
+    background:var(--ink);color:var(--paper);padding:12px 18px;border-radius:999px;
+    font-size:13px;opacity:0;transition:all .25s ease;z-index:80;pointer-events:none;
+    box-shadow:var(--shadow-lg);max-width:90vw;text-align:center;
+  }
+  .toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
+
+  /* Empty state */
+  .empty{
+    text-align:center;padding:40px 20px;color:var(--ink-3);
+  }
+  .empty p{margin-top:8px;font-size:14px}
+
+  /* Misc */
+  .row{display:flex;gap:8px;flex-wrap:wrap;align-items:center}
+  .legend{display:flex;flex-wrap:wrap;gap:10px;font-size:11px;color:var(--ink-3);margin-top:10px}
+  .legend-item{display:inline-flex;align-items:center;gap:4px}
+  .footer{
+    text-align:center;color:var(--ink-3);font-size:12px;padding:24px 16px 0;line-height:1.5;
+  }
+  .footer a{color:var(--ink-2);text-decoration:underline;text-underline-offset:2px}
+
+  /* Reduce motion */
+  @media(prefers-reduced-motion:reduce){
+    *,*::before,*::after{animation-duration:.01ms!important;transition-duration:.01ms!important}
+  }
+</style>
+</head>
+<body>
+<div class="app">
+
+  <!-- HEADER -->
+  <header class="topbar">
+    <div class="brand">
+      <svg class="brand-mark" viewBox="0 0 40 40" fill="none" aria-label="Логотип Гарвардская тарелка">
+        <circle cx="20" cy="20" r="18" fill="#ead9b8" stroke="#36322a" stroke-width="1.4"/>
+        <path d="M2 22a18 18 0 0036 0H2z" fill="#7a8a4f"/>
+        <path d="M20 4v18" stroke="#36322a" stroke-width="1.2" stroke-linecap="round"/>
+        <path d="M20 22h17.5" stroke="#36322a" stroke-width="1.2" stroke-linecap="round"/>
+        <circle cx="29" cy="12" r="2.6" fill="#c4623f"/>
+      </svg>
+      <div>
+        <div class="brand-name">Гарвардская тарелка</div>
+        <div class="brand-sub">Wellness · Nutrition · ТКМ</div>
+      </div>
+    </div>
+    <button class="profile-btn" id="profile-btn" aria-label="Настройки профиля">
+      <span id="profile-emoji">🌿</span>
+      <span id="profile-label">Профиль</span>
+    </button>
+  </header>
+
+  <!-- TABS -->
+  <nav class="tabs" role="tablist">
+    <button class="tab" role="tab" aria-selected="true" data-tab="build">Собрать тарелку</button>
+    <button class="tab" role="tab" aria-selected="false" data-tab="improve">Улучшить мою тарелку</button>
+    <button class="tab" role="tab" aria-selected="false" data-tab="ideas">Идеи из моих продуктов</button>
+  </nav>
+
+  <!-- BUILD TAB -->
+  <section id="tab-build" class="tab-panel">
+    <div class="grid">
+      <!-- LEFT: Plate + Library -->
+      <div>
+        <div class="card" style="padding:24px 20px">
+          <div class="plate-wrap" id="plate-wrap">
+            <div class="plate">
+              <div class="zone zone-veg" data-zone="veg" id="zone-veg"></div>
+              <div class="zone zone-protein" data-zone="protein" id="zone-protein"></div>
+              <div class="zone zone-carb" data-zone="carb" id="zone-carb"></div>
+              <svg class="plate-svg" viewBox="0 0 100 100" preserveAspectRatio="none" aria-hidden="true">
+                <line x1="50" y1="0" x2="50" y2="100" stroke="#d4c6a8" stroke-width=".4" stroke-dasharray="1.5,1.5" vector-effect="non-scaling-stroke"/>
+                <line x1="50" y1="50" x2="100" y2="50" stroke="#d4c6a8" stroke-width=".4" stroke-dasharray="1.5,1.5" vector-effect="non-scaling-stroke"/>
+              </svg>
+            </div>
+            <span class="zone-label lbl-veg">½ овощи и зелень</span>
+            <span class="zone-label lbl-protein">¼ белок</span>
+            <span class="zone-label lbl-carb">¼ сложные углеводы</span>
+            <div class="zone zone-extras" data-zone="extras" id="zone-extras"></div>
+            <span class="lbl-extras">полезные дополнения</span>
+          </div>
+          <div class="row" style="justify-content:center;margin-top:14px">
+            <button class="btn-ghost qa-btn" id="clear-plate" style="font-size:12px;color:var(--ink-3)">Очистить тарелку</button>
+          </div>
+          <div class="legend">
+            <span class="legend-item"><span class="therm warming"></span> согревающий</span>
+            <span class="legend-item"><span class="therm neutral"></span> нейтральный</span>
+            <span class="legend-item"><span class="therm cooling"></span> охлаждающий</span>
+            <span class="legend-item">· точка порции: маленькая · средняя · большая</span>
+          </div>
+        </div>
+
+        <div class="card" style="margin-top:20px">
+          <div class="card-title">
+            <h2>Библиотека продуктов</h2>
+            <span class="muted small" id="lib-count"></span>
+          </div>
+          <div class="search-wrap">
+            <svg class="search-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="7"/><path d="m20 20-3-3"/></svg>
+            <input class="search-input" id="lib-search" placeholder="Найти продукт: гречка, лосось, тыква…" autocomplete="off"/>
+          </div>
+          <div class="cat-tabs" id="cat-tabs"></div>
+          <div class="chips" id="lib-chips"></div>
+        </div>
+      </div>
+
+      <!-- RIGHT: Insights -->
+      <aside>
+        <div class="card">
+          <div class="card-title">
+            <h2>Как ваша тарелка</h2>
+          </div>
+          <div class="scores" id="scores"></div>
+          <div class="insight-list" id="insights"></div>
+
+          <div class="section-block" style="margin-top:18px">
+            <h3>Быстрые улучшения</h3>
+            <div class="quick-actions" id="quick-actions">
+              <button class="qa-btn" data-action="fiber">+ Добавить клетчатку</button>
+              <button class="qa-btn" data-action="satiety">+ Усилить сытость</button>
+              <button class="qa-btn" data-action="gut">Мягче для ЖКТ</button>
+              <button class="qa-btn" data-action="warmer">Сделать теплее по ТКМ</button>
+              <button class="qa-btn" data-action="less-sweet">Меньше сладкой нагрузки</button>
+              <button class="qa-btn" data-action="less-damp">Снизить сырость по ТКМ</button>
+            </div>
+          </div>
+
+          <div class="tcm" id="tcm-block">
+            <div class="tcm-title">✦ Взгляд ТКМ</div>
+            <div class="tcm-body" id="tcm-body"></div>
+          </div>
+        </div>
+      </aside>
+    </div>
+  </section>
+
+  <!-- IMPROVE TAB -->
+  <section id="tab-improve" class="tab-panel" hidden>
+    <div class="grid">
+      <div>
+        <div class="card">
+          <h2 style="margin-bottom:6px">Что вы уже выбрали</h2>
+          <p class="muted" style="margin-bottom:14px">Покажем, что хорошо, чего не хватает, и как улучшить под вашу цель.</p>
+          <div id="improve-current"></div>
+        </div>
+      </div>
+      <aside>
+        <div class="card">
+          <div class="card-title"><h2>Точечные улучшения</h2></div>
+          <div id="improve-suggestions"></div>
+        </div>
+      </aside>
+    </div>
+  </section>
+
+  <!-- IDEAS TAB -->
+  <section id="tab-ideas" class="tab-panel" hidden>
+    <div class="grid">
+      <div>
+        <div class="card">
+          <h2 style="margin-bottom:6px">Что у меня есть дома</h2>
+          <p class="muted" style="margin-bottom:14px">Отметьте продукты, которые сейчас под рукой — соберём идеи для тарелки.</p>
+          <div class="search-wrap">
+            <svg class="search-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="7"/><path d="m20 20-3-3"/></svg>
+            <input class="search-input" id="pantry-search" placeholder="Что есть в холодильнике?" autocomplete="off"/>
+          </div>
+          <div class="cat-tabs" id="pantry-cat-tabs"></div>
+          <div class="chips" id="pantry-chips"></div>
+        </div>
+        <div class="card" style="margin-top:20px">
+          <h3 style="font-family:var(--font-body);font-size:14px;font-weight:600;margin-bottom:8px">В корзине</h3>
+          <div class="pantry" id="pantry-bag"><span class="pantry-empty">Пока ничего не отмечено</span></div>
+          <button class="btn" id="generate-ideas">Сгенерировать идеи →</button>
+        </div>
+      </div>
+      <aside>
+        <div class="card">
+          <div class="card-title"><h2>Идеи тарелок</h2></div>
+          <div id="ideas-list"><div class="empty"><p>Отметьте продукты слева и нажмите «Сгенерировать идеи».</p></div></div>
+        </div>
+      </aside>
+    </div>
+  </section>
+
+  <footer class="footer">
+    Это инструмент wellness-конструктора, не медицинская рекомендация. Прислушивайтесь к себе и при сомнениях — к специалисту.
+  </footer>
+</div>
+
+<!-- Onboarding Modal -->
+<div class="modal" id="onb" role="dialog" aria-modal="true" aria-labelledby="onb-title">
+  <div class="modal-panel">
+    <div class="step-header">
+      <span class="step-progress" id="onb-progress">Шаг 1 из 5</span>
+      <button class="step-close" id="onb-skip">Пропустить</button>
+    </div>
+    <div id="onb-content"></div>
+  </div>
+</div>
+
+<!-- Portion popover -->
+<div class="portion-popover" id="portion-pop"></div>
+
+<!-- Toast -->
+<div class="toast" id="toast"></div>
+
+<script>
+/* ============ DATA ============ */
+</script>
+<script id="data-script">
+const PRODUCTS = [
+  {id:"brokkoli",name:"Брокколи",cat:"vegetables",sub:"крестоцветные",zone:"veg",tags:["клетчатка"],thermal:"neutral",effects:["digestion","light"],vegetarian:true,glutenFree:true,dairyFree:true,portions:{s:"горсть",m:"полтарелки",l:"большая порция"},satiety:7,gutGentle:8,warming:5},
+  {id:"cvetnaya",name:"Цветная капуста",cat:"vegetables",sub:"крестоцветные",zone:"veg",tags:["клетчатка"],thermal:"neutral",effects:["digestion","light"],vegetarian:true,glutenFree:true,dairyFree:true,portions:{s:"горсть",m:"полтарелки",l:"большая порция"},satiety:7,gutGentle:7,warming:5},
+  {id:"kapusta_b",name:"Белокочанная капуста",cat:"vegetables",sub:"крестоцветные",zone:"veg",tags:["клетчатка"],thermal:"cooling",effects:["light","damp"],vegetarian:true,glutenFree:true,dairyFree:true,portions:{s:"горсть",m:"полтарелки",l:"большая порция"},satiety:6,gutGentle:5,warming:3},
+  {id:"shpinat",name:"Шпинат",cat:"vegetables",sub:"листовые",zone:"veg",tags:["клетчатка"],thermal:"cooling",effects:["light","moistening"],vegetarian:true,glutenFree:true,dairyFree:true,portions:{s:"горсть",m:"полтарелки",l:"большая порция"},satiety:5,gutGentle:6,warming:3},
+  {id:"rukola",name:"Руккола",cat:"vegetables",sub:"листовые",zone:"veg",tags:["клетчатка"],thermal:"cooling",effects:["light"],vegetarian:true,glutenFree:true,dairyFree:true,portions:{s:"горсть",m:"полтарелки",l:"большая порция"},satiety:4,gutGentle:6,warming:3},
+  {id:"salat",name:"Зелёный салат",cat:"vegetables",sub:"листовые",zone:"veg",tags:["клетчатка"],thermal:"cooling",effects:["light","moistening"],vegetarian:true,glutenFree:true,dairyFree:true,portions:{s:"горсть",m:"полтарелки",l:"большая порция"},satiety:3,gutGentle:6,warming:2},
+  {id:"ogurec",name:"Огурец",cat:"vegetables",sub:"сочные",zone:"veg",tags:["клетчатка"],thermal:"cooling",effects:["moistening","light"],vegetarian:true,glutenFree:true,dairyFree:true,portions:{s:"горсть",m:"полтарелки",l:"большая порция"},satiety:3,gutGentle:6,warming:2},
+  {id:"pomidor",name:"Помидор",cat:"vegetables",sub:"сочные",zone:"veg",tags:["клетчатка"],thermal:"cooling",effects:["moistening"],vegetarian:true,glutenFree:true,dairyFree:true,portions:{s:"горсть",m:"полтарелки",l:"большая порция"},satiety:4,gutGentle:5,warming:2},
+  {id:"perec_kr",name:"Сладкий перец",cat:"vegetables",sub:"сочные",zone:"veg",tags:["клетчатка"],thermal:"neutral",effects:["light"],vegetarian:true,glutenFree:true,dairyFree:true,portions:{s:"горсть",m:"полтарелки",l:"большая порция"},satiety:4,gutGentle:6,warming:4},
+  {id:"morkov",name:"Морковь",cat:"vegetables",sub:"корнеплоды",zone:"veg",tags:["клетчатка"],thermal:"neutral",effects:["digestion","nourishing"],vegetarian:true,glutenFree:true,dairyFree:true,portions:{s:"горсть",m:"полтарелки",l:"большая порция"},satiety:5,gutGentle:7,warming:5},
+  {id:"svekla",name:"Свёкла",cat:"vegetables",sub:"корнеплоды",zone:"veg",tags:["клетчатка"],thermal:"neutral",effects:["nourishing"],vegetarian:true,glutenFree:true,dairyFree:true,portions:{s:"горсть",m:"полтарелки",l:"большая порция"},satiety:6,gutGentle:6,warming:5},
+  {id:"tykva",name:"Тыква",cat:"vegetables",sub:"корнеплоды",zone:"veg",tags:["клетчатка"],thermal:"warming",effects:["digestion","nourishing"],vegetarian:true,glutenFree:true,dairyFree:true,portions:{s:"горсть",m:"полтарелки",l:"большая порция"},satiety:7,gutGentle:8,warming:8},
+  {id:"repa",name:"Репа",cat:"vegetables",sub:"корнеплоды",zone:"veg",tags:["клетчатка"],thermal:"neutral",effects:["digestion","light"],vegetarian:true,glutenFree:true,dairyFree:true,portions:{s:"горсть",m:"полтарелки",l:"большая порция"},satiety:5,gutGentle:7,warming:5},
+  {id:"redis",name:"Редис",cat:"vegetables",sub:"корнеплоды",zone:"veg",tags:["клетчатка"],thermal:"cooling",effects:["light","drying"],vegetarian:true,glutenFree:true,dairyFree:true,portions:{s:"горсть",m:"полтарелки",l:"большая порция"},satiety:3,gutGentle:5,warming:2},
+  {id:"kabachok",name:"Кабачок",cat:"vegetables",sub:"тыквенные",zone:"veg",tags:["клетчатка"],thermal:"cooling",effects:["light","digestion"],vegetarian:true,glutenFree:true,dairyFree:true,portions:{s:"горсть",m:"полтарелки",l:"большая порция"},satiety:5,gutGentle:8,warming:3},
+  {id:"baklazhan",name:"Баклажан",cat:"vegetables",sub:"паслёновые",zone:"veg",tags:["клетчатка"],thermal:"cooling",effects:["moistening"],vegetarian:true,glutenFree:true,dairyFree:true,portions:{s:"горсть",m:"полтарелки",l:"большая порция"},satiety:5,gutGentle:5,warming:3},
+  {id:"luk",name:"Репчатый лук",cat:"vegetables",sub:"луковые",zone:"veg",tags:["клетчатка"],thermal:"warming",effects:["digestion","drying"],vegetarian:true,glutenFree:true,dairyFree:true,portions:{s:"горсть",m:"полтарелки",l:"большая порция"},satiety:3,gutGentle:5,warming:7},
+  {id:"chesnok",name:"Чеснок",cat:"vegetables",sub:"луковые",zone:"veg",tags:[],thermal:"warming",effects:["digestion","drying"],vegetarian:true,glutenFree:true,dairyFree:true,portions:{s:"горсть",m:"полтарелки",l:"большая порция"},satiety:2,gutGentle:4,warming:8},
+  {id:"imbir",name:"Имбирь",cat:"vegetables",sub:"пряные",zone:"veg",tags:[],thermal:"warming",effects:["digestion","drying"],vegetarian:true,glutenFree:true,dairyFree:true,portions:{s:"горсть",m:"полтарелки",l:"большая порция"},satiety:1,gutGentle:6,warming:9},
+  {id:"seller",name:"Сельдерей",cat:"vegetables",sub:"сочные",zone:"veg",tags:["клетчатка"],thermal:"cooling",effects:["light","drying"],vegetarian:true,glutenFree:true,dairyFree:true,portions:{s:"горсть",m:"полтарелки",l:"большая порция"},satiety:4,gutGentle:6,warming:3},
+  {id:"sparzha",name:"Спаржа",cat:"vegetables",sub:"сочные",zone:"veg",tags:["клетчатка"],thermal:"cooling",effects:["light"],vegetarian:true,glutenFree:true,dairyFree:true,portions:{s:"горсть",m:"полтарелки",l:"большая порция"},satiety:5,gutGentle:6,warming:3},
+  {id:"fasol_str",name:"Стручковая фасоль",cat:"vegetables",sub:"бобовые",zone:"veg",tags:["клетчатка"],thermal:"neutral",effects:["light","digestion"],vegetarian:true,glutenFree:true,dairyFree:true,portions:{s:"горсть",m:"полтарелки",l:"большая порция"},satiety:6,gutGentle:7,warming:4},
+  {id:"gribi",name:"Шампиньоны",cat:"vegetables",sub:"грибы",zone:"veg",tags:["клетчатка"],thermal:"cooling",effects:["damp","nourishing"],vegetarian:true,glutenFree:true,dairyFree:true,portions:{s:"горсть",m:"полтарелки",l:"большая порция"},satiety:5,gutGentle:5,warming:3},
+  {id:"kapusta_kv",name:"Квашеная капуста",cat:"vegetables",sub:"ферментированные",zone:"veg",tags:["клетчатка"],thermal:"neutral",effects:["digestion"],vegetarian:true,glutenFree:true,dairyFree:true,portions:{s:"горсть",m:"полтарелки",l:"большая порция"},satiety:5,gutGentle:6,warming:4},
+  {id:"petrushka",name:"Петрушка и укроп",cat:"vegetables",sub:"зелень",zone:"veg",tags:[],thermal:"warming",effects:["digestion"],vegetarian:true,glutenFree:true,dairyFree:true,portions:{s:"горсть",m:"полтарелки",l:"большая порция"},satiety:1,gutGentle:6,warming:6},
+  {id:"kurica_gr",name:"Куриная грудка",cat:"proteins",sub:"птица",zone:"protein",tags:["белок"],thermal:"warming",effects:["nourishing","digestion"],vegetarian:false,glutenFree:true,dairyFree:true,portions:{s:"70 г",m:"120 г",l:"180 г"},satiety:9,gutGentle:7,warming:7},
+  {id:"kurica_bedro",name:"Куриное бедро",cat:"proteins",sub:"птица",zone:"protein",tags:["белок"],thermal:"warming",effects:["nourishing"],vegetarian:false,glutenFree:true,dairyFree:true,portions:{s:"70 г",m:"120 г",l:"180 г"},satiety:9,gutGentle:6,warming:7},
+  {id:"indeyka",name:"Индейка",cat:"proteins",sub:"птица",zone:"protein",tags:["белок"],thermal:"warming",effects:["nourishing","digestion"],vegetarian:false,glutenFree:true,dairyFree:true,portions:{s:"70 г",m:"120 г",l:"180 г"},satiety:9,gutGentle:7,warming:7},
+  {id:"govyadina",name:"Говядина постная",cat:"proteins",sub:"красное мясо",zone:"protein",tags:["белок"],thermal:"warming",effects:["nourishing"],vegetarian:false,glutenFree:true,dairyFree:true,portions:{s:"70 г",m:"120 г",l:"180 г"},satiety:9,gutGentle:5,warming:8},
+  {id:"baranina",name:"Баранина",cat:"proteins",sub:"красное мясо",zone:"protein",tags:["белок"],thermal:"warming",effects:["nourishing"],vegetarian:false,glutenFree:true,dairyFree:true,portions:{s:"70 г",m:"120 г",l:"180 г"},satiety:9,gutGentle:5,warming:9},
+  {id:"svinina",name:"Свинина постная",cat:"proteins",sub:"красное мясо",zone:"protein",tags:["белок"],thermal:"neutral",effects:["nourishing","moistening"],vegetarian:false,glutenFree:true,dairyFree:true,portions:{s:"70 г",m:"120 г",l:"180 г"},satiety:9,gutGentle:5,warming:5},
+  {id:"losos",name:"Лосось",cat:"proteins",sub:"рыба",zone:"protein",tags:["белок","полезные жиры"],thermal:"warming",effects:["nourishing","moistening"],vegetarian:false,glutenFree:true,dairyFree:true,portions:{s:"70 г",m:"120 г",l:"180 г"},satiety:8,gutGentle:7,warming:7},
+  {id:"treska",name:"Треска",cat:"proteins",sub:"рыба",zone:"protein",tags:["белок"],thermal:"neutral",effects:["light","nourishing"],vegetarian:false,glutenFree:true,dairyFree:true,portions:{s:"70 г",m:"120 г",l:"180 г"},satiety:8,gutGentle:8,warming:5},
+  {id:"skumbriya",name:"Скумбрия",cat:"proteins",sub:"рыба",zone:"protein",tags:["белок","полезные жиры"],thermal:"warming",effects:["nourishing"],vegetarian:false,glutenFree:true,dairyFree:true,portions:{s:"70 г",m:"120 г",l:"180 г"},satiety:8,gutGentle:6,warming:6},
+  {id:"seld",name:"Сельдь",cat:"proteins",sub:"рыба",zone:"protein",tags:["белок","полезные жиры"],thermal:"neutral",effects:["nourishing"],vegetarian:false,glutenFree:true,dairyFree:true,portions:{s:"70 г",m:"120 г",l:"180 г"},satiety:7,gutGentle:5,warming:5},
+  {id:"tunets",name:"Тунец",cat:"proteins",sub:"рыба",zone:"protein",tags:["белок"],thermal:"neutral",effects:["nourishing"],vegetarian:false,glutenFree:true,dairyFree:true,portions:{s:"70 г",m:"120 г",l:"180 г"},satiety:8,gutGentle:6,warming:5},
+  {id:"krevetki",name:"Креветки",cat:"proteins",sub:"морепродукты",zone:"protein",tags:["белок"],thermal:"warming",effects:["nourishing"],vegetarian:false,glutenFree:true,dairyFree:true,portions:{s:"70 г",m:"120 г",l:"180 г"},satiety:7,gutGentle:6,warming:6},
+  {id:"kalmar",name:"Кальмар",cat:"proteins",sub:"морепродукты",zone:"protein",tags:["белок"],thermal:"neutral",effects:["nourishing"],vegetarian:false,glutenFree:true,dairyFree:true,portions:{s:"70 г",m:"120 г",l:"180 г"},satiety:7,gutGentle:6,warming:5},
+  {id:"yayco",name:"Яйцо куриное",cat:"proteins",sub:"яйца",zone:"protein",tags:["белок"],thermal:"neutral",effects:["nourishing","moistening"],vegetarian:true,glutenFree:true,dairyFree:true,portions:{s:"70 г",m:"120 г",l:"180 г"},satiety:7,gutGentle:7,warming:5},
+  {id:"tvorog",name:"Творог",cat:"proteins",sub:"молочные",zone:"protein",tags:["белок"],thermal:"neutral",effects:["moistening","nourishing"],vegetarian:true,glutenFree:true,dairyFree:false,portions:{s:"70 г",m:"120 г",l:"180 г"},satiety:7,gutGentle:6,warming:4},
+  {id:"yogurt_n",name:"Натуральный йогурт",cat:"proteins",sub:"молочные",zone:"protein",tags:["белок"],thermal:"cooling",effects:["moistening","damp"],vegetarian:true,glutenFree:true,dairyFree:false,portions:{s:"70 г",m:"120 г",l:"180 г"},satiety:5,gutGentle:6,warming:3},
+  {id:"syr_tv",name:"Твёрдый сыр",cat:"proteins",sub:"молочные",zone:"protein",tags:["белок"],thermal:"neutral",effects:["moistening","damp"],vegetarian:true,glutenFree:true,dairyFree:false,portions:{s:"70 г",m:"120 г",l:"180 г"},satiety:7,gutGentle:4,warming:4},
+  {id:"syr_fet",name:"Фета или брынза",cat:"proteins",sub:"молочные",zone:"protein",tags:["белок"],thermal:"neutral",effects:["moistening"],vegetarian:true,glutenFree:true,dairyFree:false,portions:{s:"70 г",m:"120 г",l:"180 г"},satiety:6,gutGentle:5,warming:4},
+  {id:"tofu",name:"Тофу",cat:"proteins",sub:"растительные",zone:"protein",tags:["белок"],thermal:"cooling",effects:["moistening","damp"],vegetarian:true,glutenFree:true,dairyFree:true,portions:{s:"70 г",m:"120 г",l:"180 г"},satiety:6,gutGentle:6,warming:3},
+  {id:"tempe",name:"Темпе",cat:"proteins",sub:"растительные",zone:"protein",tags:["белок"],thermal:"neutral",effects:["digestion","nourishing"],vegetarian:true,glutenFree:true,dairyFree:true,portions:{s:"70 г",m:"120 г",l:"180 г"},satiety:7,gutGentle:6,warming:4},
+  {id:"grechka",name:"Гречка",cat:"grains",sub:"крупы",zone:"carb",tags:["сложные углеводы","клетчатка"],thermal:"neutral",effects:["nourishing","digestion"],vegetarian:true,glutenFree:true,dairyFree:true,portions:{s:"3 ст.л.",m:"полстакана",l:"стакан"},satiety:8,gutGentle:7,warming:5},
+  {id:"ovsyanka",name:"Овсянка цельная",cat:"grains",sub:"крупы",zone:"carb",tags:["сложные углеводы","клетчатка"],thermal:"warming",effects:["nourishing","moistening"],vegetarian:true,glutenFree:true,dairyFree:true,portions:{s:"3 ст.л.",m:"полстакана",l:"стакан"},satiety:7,gutGentle:7,warming:6},
+  {id:"ris_buryi",name:"Бурый рис",cat:"grains",sub:"крупы",zone:"carb",tags:["сложные углеводы","клетчатка"],thermal:"neutral",effects:["digestion","nourishing"],vegetarian:true,glutenFree:true,dairyFree:true,portions:{s:"3 ст.л.",m:"полстакана",l:"стакан"},satiety:7,gutGentle:7,warming:5},
+  {id:"ris_bel",name:"Белый рис",cat:"grains",sub:"крупы",zone:"carb",tags:["сложные углеводы"],thermal:"neutral",effects:["digestion","light"],vegetarian:true,glutenFree:true,dairyFree:true,portions:{s:"3 ст.л.",m:"полстакана",l:"стакан"},satiety:7,gutGentle:8,warming:5},
+  {id:"kinoa",name:"Киноа",cat:"grains",sub:"крупы",zone:"carb",tags:["сложные углеводы","белок"],thermal:"warming",effects:["nourishing"],vegetarian:true,glutenFree:true,dairyFree:true,portions:{s:"3 ст.л.",m:"полстакана",l:"стакан"},satiety:7,gutGentle:7,warming:6},
+  {id:"bulgur",name:"Булгур",cat:"grains",sub:"крупы",zone:"carb",tags:["сложные углеводы","клетчатка"],thermal:"neutral",effects:["nourishing"],vegetarian:true,glutenFree:false,dairyFree:true,portions:{s:"3 ст.л.",m:"полстакана",l:"стакан"},satiety:7,gutGentle:6,warming:5},
+  {id:"kuskus",name:"Кускус",cat:"grains",sub:"крупы",zone:"carb",tags:["сложные углеводы"],thermal:"neutral",effects:["light"],vegetarian:true,glutenFree:false,dairyFree:true,portions:{s:"3 ст.л.",m:"полстакана",l:"стакан"},satiety:6,gutGentle:6,warming:5},
+  {id:"pshenka",name:"Пшено",cat:"grains",sub:"крупы",zone:"carb",tags:["сложные углеводы"],thermal:"neutral",effects:["digestion","drying"],vegetarian:true,glutenFree:true,dairyFree:true,portions:{s:"3 ст.л.",m:"полстакана",l:"стакан"},satiety:7,gutGentle:7,warming:5},
+  {id:"polba",name:"Полба",cat:"grains",sub:"крупы",zone:"carb",tags:["сложные углеводы","клетчатка"],thermal:"neutral",effects:["nourishing"],vegetarian:true,glutenFree:false,dairyFree:true,portions:{s:"3 ст.л.",m:"полстакана",l:"стакан"},satiety:7,gutGentle:6,warming:5},
+  {id:"hleb_rzhanoi",name:"Ржаной хлеб на закваске",cat:"grains",sub:"хлеб",zone:"carb",tags:["сложные углеводы","клетчатка"],thermal:"neutral",effects:["nourishing"],vegetarian:true,glutenFree:false,dairyFree:true,portions:{s:"3 ст.л.",m:"полстакана",l:"стакан"},satiety:7,gutGentle:5,warming:5},
+  {id:"hleb_cz",name:"Цельнозерновой хлеб",cat:"grains",sub:"хлеб",zone:"carb",tags:["сложные углеводы","клетчатка"],thermal:"neutral",effects:["nourishing"],vegetarian:true,glutenFree:false,dairyFree:true,portions:{s:"3 ст.л.",m:"полстакана",l:"стакан"},satiety:7,gutGentle:5,warming:5},
+  {id:"kartofel_zap",name:"Запечённый картофель",cat:"grains",sub:"корнеплоды",zone:"carb",tags:["сложные углеводы"],thermal:"neutral",effects:["nourishing","damp"],vegetarian:true,glutenFree:true,dairyFree:true,portions:{s:"3 ст.л.",m:"полстакана",l:"стакан"},satiety:7,gutGentle:7,warming:5},
+  {id:"batat",name:"Батат запечённый",cat:"grains",sub:"корнеплоды",zone:"carb",tags:["сложные углеводы","клетчатка"],thermal:"warming",effects:["nourishing","digestion"],vegetarian:true,glutenFree:true,dairyFree:true,portions:{s:"3 ст.л.",m:"полстакана",l:"стакан"},satiety:8,gutGentle:8,warming:7},
+  {id:"makarony_cz",name:"Цельнозерновая паста",cat:"grains",sub:"паста",zone:"carb",tags:["сложные углеводы","клетчатка"],thermal:"neutral",effects:["nourishing"],vegetarian:true,glutenFree:false,dairyFree:true,portions:{s:"3 ст.л.",m:"полстакана",l:"стакан"},satiety:7,gutGentle:6,warming:5},
+  {id:"ris_dik",name:"Дикий рис",cat:"grains",sub:"крупы",zone:"carb",tags:["сложные углеводы","клетчатка"],thermal:"neutral",effects:["nourishing"],vegetarian:true,glutenFree:true,dairyFree:true,portions:{s:"3 ст.л.",m:"полстакана",l:"стакан"},satiety:7,gutGentle:6,warming:5},
+  {id:"chechevica_kr",name:"Красная чечевица",cat:"legumes",sub:"бобовые",zone:"protein",tags:["белок","клетчатка"],thermal:"neutral",effects:["digestion","nourishing"],vegetarian:true,glutenFree:true,dairyFree:true,portions:{s:"3 ст.л.",m:"полстакана",l:"стакан"},satiety:8,gutGentle:6,warming:5},
+  {id:"chechevica_z",name:"Зелёная чечевица",cat:"legumes",sub:"бобовые",zone:"protein",tags:["белок","клетчатка"],thermal:"neutral",effects:["nourishing"],vegetarian:true,glutenFree:true,dairyFree:true,portions:{s:"3 ст.л.",m:"полстакана",l:"стакан"},satiety:8,gutGentle:6,warming:5},
+  {id:"nut",name:"Нут",cat:"legumes",sub:"бобовые",zone:"protein",tags:["белок","клетчатка"],thermal:"neutral",effects:["nourishing","damp"],vegetarian:true,glutenFree:true,dairyFree:true,portions:{s:"3 ст.л.",m:"полстакана",l:"стакан"},satiety:8,gutGentle:5,warming:5},
+  {id:"mash",name:"Маш",cat:"legumes",sub:"бобовые",zone:"protein",tags:["белок","клетчатка"],thermal:"cooling",effects:["digestion","light"],vegetarian:true,glutenFree:true,dairyFree:true,portions:{s:"3 ст.л.",m:"полстакана",l:"стакан"},satiety:7,gutGentle:7,warming:3},
+  {id:"fasol_b",name:"Белая фасоль",cat:"legumes",sub:"бобовые",zone:"protein",tags:["белок","клетчатка"],thermal:"neutral",effects:["nourishing","damp"],vegetarian:true,glutenFree:true,dairyFree:true,portions:{s:"3 ст.л.",m:"полстакана",l:"стакан"},satiety:8,gutGentle:5,warming:4},
+  {id:"fasol_kr",name:"Красная фасоль",cat:"legumes",sub:"бобовые",zone:"protein",tags:["белок","клетчатка"],thermal:"neutral",effects:["nourishing","damp"],vegetarian:true,glutenFree:true,dairyFree:true,portions:{s:"3 ст.л.",m:"полстакана",l:"стакан"},satiety:8,gutGentle:5,warming:4},
+  {id:"goroh",name:"Горох колотый",cat:"legumes",sub:"бобовые",zone:"protein",tags:["белок","клетчатка"],thermal:"neutral",effects:["nourishing","damp"],vegetarian:true,glutenFree:true,dairyFree:true,portions:{s:"3 ст.л.",m:"полстакана",l:"стакан"},satiety:8,gutGentle:5,warming:5},
+  {id:"edamame",name:"Эдамаме",cat:"legumes",sub:"бобовые",zone:"protein",tags:["белок","клетчатка"],thermal:"neutral",effects:["light","nourishing"],vegetarian:true,glutenFree:true,dairyFree:true,portions:{s:"3 ст.л.",m:"полстакана",l:"стакан"},satiety:7,gutGentle:6,warming:4},
+  {id:"avokado",name:"Авокадо",cat:"fats_seeds",sub:"плоды",zone:"extras",tags:["полезные жиры","клетчатка"],thermal:"cooling",effects:["nourishing","moistening"],vegetarian:true,glutenFree:true,dairyFree:true,portions:{s:"1 ч.л.",m:"1 ст.л.",l:"горсть"},satiety:7,gutGentle:7,warming:3},
+  {id:"orehi_gr",name:"Грецкие орехи",cat:"fats_seeds",sub:"орехи",zone:"extras",tags:["полезные жиры","белок"],thermal:"warming",effects:["nourishing"],vegetarian:true,glutenFree:true,dairyFree:true,portions:{s:"1 ч.л.",m:"1 ст.л.",l:"горсть"},satiety:6,gutGentle:5,warming:7},
+  {id:"mindal",name:"Миндаль",cat:"fats_seeds",sub:"орехи",zone:"extras",tags:["полезные жиры","белок"],thermal:"neutral",effects:["nourishing","moistening"],vegetarian:true,glutenFree:true,dairyFree:true,portions:{s:"1 ч.л.",m:"1 ст.л.",l:"горсть"},satiety:6,gutGentle:5,warming:5},
+  {id:"kedr",name:"Кедровые орехи",cat:"fats_seeds",sub:"орехи",zone:"extras",tags:["полезные жиры"],thermal:"warming",effects:["nourishing"],vegetarian:true,glutenFree:true,dairyFree:true,portions:{s:"1 ч.л.",m:"1 ст.л.",l:"горсть"},satiety:6,gutGentle:5,warming:6},
+  {id:"funduk",name:"Фундук",cat:"fats_seeds",sub:"орехи",zone:"extras",tags:["полезные жиры","белок"],thermal:"warming",effects:["nourishing"],vegetarian:true,glutenFree:true,dairyFree:true,portions:{s:"1 ч.л.",m:"1 ст.л.",l:"горсть"},satiety:6,gutGentle:5,warming:6},
+  {id:"kashew",name:"Кешью",cat:"fats_seeds",sub:"орехи",zone:"extras",tags:["полезные жиры","белок"],thermal:"neutral",effects:["nourishing"],vegetarian:true,glutenFree:true,dairyFree:true,portions:{s:"1 ч.л.",m:"1 ст.л.",l:"горсть"},satiety:6,gutGentle:5,warming:4},
+  {id:"len_sem",name:"Семена льна",cat:"fats_seeds",sub:"семена",zone:"extras",tags:["полезные жиры","клетчатка"],thermal:"neutral",effects:["digestion","moistening"],vegetarian:true,glutenFree:true,dairyFree:true,portions:{s:"1 ч.л.",m:"1 ст.л.",l:"горсть"},satiety:4,gutGentle:7,warming:4},
+  {id:"chia",name:"Семена чиа",cat:"fats_seeds",sub:"семена",zone:"extras",tags:["полезные жиры","клетчатка"],thermal:"neutral",effects:["moistening","digestion"],vegetarian:true,glutenFree:true,dairyFree:true,portions:{s:"1 ч.л.",m:"1 ст.л.",l:"горсть"},satiety:4,gutGentle:8,warming:4},
+  {id:"tikv_sem",name:"Тыквенные семечки",cat:"fats_seeds",sub:"семена",zone:"extras",tags:["полезные жиры","белок"],thermal:"neutral",effects:["nourishing"],vegetarian:true,glutenFree:true,dairyFree:true,portions:{s:"1 ч.л.",m:"1 ст.л.",l:"горсть"},satiety:5,gutGentle:6,warming:5},
+  {id:"podsoln_sem",name:"Семечки подсолнуха",cat:"fats_seeds",sub:"семена",zone:"extras",tags:["полезные жиры"],thermal:"neutral",effects:["nourishing"],vegetarian:true,glutenFree:true,dairyFree:true,portions:{s:"1 ч.л.",m:"1 ст.л.",l:"горсть"},satiety:5,gutGentle:5,warming:5},
+  {id:"kunzhut",name:"Кунжут",cat:"fats_seeds",sub:"семена",zone:"extras",tags:["полезные жиры"],thermal:"neutral",effects:["nourishing","moistening"],vegetarian:true,glutenFree:true,dairyFree:true,portions:{s:"1 ч.л.",m:"1 ст.л.",l:"горсть"},satiety:4,gutGentle:6,warming:5},
+  {id:"maslo_olive",name:"Оливковое масло",cat:"fats_seeds",sub:"масла",zone:"extras",tags:["полезные жиры"],thermal:"neutral",effects:["moistening","nourishing"],vegetarian:true,glutenFree:true,dairyFree:true,portions:{s:"1 ч.л.",m:"1 ст.л.",l:"2 ст.л."},satiety:3,gutGentle:6,warming:5},
+  {id:"maslo_kokos",name:"Кокосовое масло",cat:"fats_seeds",sub:"масла",zone:"extras",tags:["полезные жиры"],thermal:"warming",effects:["nourishing"],vegetarian:true,glutenFree:true,dairyFree:true,portions:{s:"1 ч.л.",m:"1 ст.л.",l:"2 ст.л."},satiety:3,gutGentle:5,warming:7},
+  {id:"maslo_lnyan",name:"Льняное масло",cat:"fats_seeds",sub:"масла",zone:"extras",tags:["полезные жиры"],thermal:"neutral",effects:["moistening"],vegetarian:true,glutenFree:true,dairyFree:true,portions:{s:"1 ч.л.",m:"1 ст.л.",l:"2 ст.л."},satiety:3,gutGentle:6,warming:4},
+  {id:"yabloko",name:"Яблоко печёное",cat:"fruits",sub:"фрукты",zone:"extras",tags:["клетчатка"],thermal:"neutral",effects:["digestion","moistening"],vegetarian:true,glutenFree:true,dairyFree:true,portions:{s:"горсть",m:"полтарелки",l:"большая порция"},satiety:4,gutGentle:8,warming:4},
+  {id:"grusha",name:"Груша",cat:"fruits",sub:"фрукты",zone:"extras",tags:["клетчатка"],thermal:"cooling",effects:["moistening"],vegetarian:true,glutenFree:true,dairyFree:true,portions:{s:"горсть",m:"полтарелки",l:"большая порция"},satiety:4,gutGentle:7,warming:3},
+  {id:"banana",name:"Банан",cat:"fruits",sub:"фрукты",zone:"extras",tags:["клетчатка"],thermal:"cooling",effects:["moistening","damp"],vegetarian:true,glutenFree:true,dairyFree:true,portions:{s:"горсть",m:"полтарелки",l:"большая порция"},satiety:5,gutGentle:7,warming:3},
+  {id:"apelsin",name:"Апельсин",cat:"fruits",sub:"цитрус",zone:"extras",tags:["клетчатка"],thermal:"cooling",effects:["moistening"],vegetarian:true,glutenFree:true,dairyFree:true,portions:{s:"горсть",m:"полтарелки",l:"большая порция"},satiety:4,gutGentle:6,warming:3},
+  {id:"limon",name:"Лимон",cat:"fruits",sub:"цитрус",zone:"extras",tags:[],thermal:"cooling",effects:["digestion"],vegetarian:true,glutenFree:true,dairyFree:true,portions:{s:"горсть",m:"полтарелки",l:"большая порция"},satiety:1,gutGentle:5,warming:3},
+  {id:"chernika",name:"Черника",cat:"fruits",sub:"ягоды",zone:"extras",tags:["клетчатка"],thermal:"neutral",effects:["nourishing"],vegetarian:true,glutenFree:true,dairyFree:true,portions:{s:"горсть",m:"полтарелки",l:"большая порция"},satiety:3,gutGentle:6,warming:4},
+  {id:"malina",name:"Малина",cat:"fruits",sub:"ягоды",zone:"extras",tags:["клетчатка"],thermal:"warming",effects:["nourishing"],vegetarian:true,glutenFree:true,dairyFree:true,portions:{s:"горсть",m:"полтарелки",l:"большая порция"},satiety:3,gutGentle:6,warming:6},
+  {id:"klubnika",name:"Клубника",cat:"fruits",sub:"ягоды",zone:"extras",tags:["клетчатка"],thermal:"cooling",effects:["moistening"],vegetarian:true,glutenFree:true,dairyFree:true,portions:{s:"горсть",m:"полтарелки",l:"большая порция"},satiety:3,gutGentle:6,warming:3},
+  {id:"granat",name:"Гранат",cat:"fruits",sub:"фрукты",zone:"extras",tags:["клетчатка"],thermal:"warming",effects:["nourishing"],vegetarian:true,glutenFree:true,dairyFree:true,portions:{s:"горсть",m:"полтарелки",l:"большая порция"},satiety:4,gutGentle:5,warming:6},
+  {id:"hurma",name:"Хурма",cat:"fruits",sub:"фрукты",zone:"extras",tags:["клетчатка"],thermal:"cooling",effects:["moistening","damp"],vegetarian:true,glutenFree:true,dairyFree:true,portions:{s:"горсть",m:"полтарелки",l:"большая порция"},satiety:5,gutGentle:5,warming:3},
+  {id:"zelen_pesto",name:"Песто из зелени",cat:"sauces",sub:"соусы",zone:"extras",tags:["полезные жиры"],thermal:"warming",effects:["nourishing","digestion"],vegetarian:true,glutenFree:true,dairyFree:true,portions:{s:"1 ч.л.",m:"1 ст.л.",l:"2 ст.л."},satiety:3,gutGentle:6,warming:6},
+  {id:"gomasio",name:"Гомасио (кунжут с солью)",cat:"sauces",sub:"приправы",zone:"extras",tags:[],thermal:"neutral",effects:["nourishing"],vegetarian:true,glutenFree:true,dairyFree:true,portions:{s:"1 ч.л.",m:"1 ст.л.",l:"2 ст.л."},satiety:1,gutGentle:6,warming:5},
+  {id:"miso",name:"Мисо-паста",cat:"sauces",sub:"ферментированные",zone:"extras",tags:["белок"],thermal:"warming",effects:["digestion","nourishing"],vegetarian:true,glutenFree:true,dairyFree:true,portions:{s:"1 ч.л.",m:"1 ст.л.",l:"2 ст.л."},satiety:3,gutGentle:7,warming:7},
+  {id:"kurkuma",name:"Куркума",cat:"sauces",sub:"специи",zone:"extras",tags:[],thermal:"warming",effects:["digestion","drying"],vegetarian:true,glutenFree:true,dairyFree:true,portions:{s:"1 ч.л.",m:"1 ст.л.",l:"2 ст.л."},satiety:1,gutGentle:7,warming:8},
+  {id:"koriza",name:"Корица",cat:"sauces",sub:"специи",zone:"extras",tags:[],thermal:"warming",effects:["digestion","drying"],vegetarian:true,glutenFree:true,dairyFree:true,portions:{s:"1 ч.л.",m:"1 ст.л.",l:"2 ст.л."},satiety:1,gutGentle:7,warming:9},
+  {id:"kardamon",name:"Кардамон",cat:"sauces",sub:"специи",zone:"extras",tags:[],thermal:"warming",effects:["digestion"],vegetarian:true,glutenFree:true,dairyFree:true,portions:{s:"1 ч.л.",m:"1 ст.л.",l:"2 ст.л."},satiety:1,gutGentle:7,warming:8},
+  {id:"yabloch_uksus",name:"Яблочный уксус",cat:"sauces",sub:"соусы",zone:"extras",tags:[],thermal:"warming",effects:["digestion"],vegetarian:true,glutenFree:true,dairyFree:true,portions:{s:"1 ч.л.",m:"1 ст.л.",l:"2 ст.л."},satiety:1,gutGentle:6,warming:5},
+  {id:"tahini",name:"Тахини",cat:"sauces",sub:"соусы",zone:"extras",tags:["полезные жиры","белок"],thermal:"neutral",effects:["nourishing","moistening"],vegetarian:true,glutenFree:true,dairyFree:true,portions:{s:"1 ч.л.",m:"1 ст.л.",l:"2 ст.л."},satiety:4,gutGentle:6,warming:5},
+  {id:"yogurtnyi_souce",name:"Йогуртовая заправка с зеленью",cat:"sauces",sub:"соусы",zone:"extras",tags:[],thermal:"cooling",effects:["moistening"],vegetarian:true,glutenFree:true,dairyFree:false,portions:{s:"1 ч.л.",m:"1 ст.л.",l:"2 ст.л."},satiety:2,gutGentle:6,warming:3},
+  {id:"hummus",name:"Хумус",cat:"sauces",sub:"соусы",zone:"extras",tags:["белок","клетчатка","полезные жиры"],thermal:"neutral",effects:["nourishing"],vegetarian:true,glutenFree:true,dairyFree:true,portions:{s:"1 ч.л.",m:"1 ст.л.",l:"2 ст.л."},satiety:5,gutGentle:6,warming:5}
+];
+
+</script>
+<script>
+/* ============ APP ============ */
+
+/* Emoji map by category/subcategory hints */
+const EMOJI = {
+  brokkoli:"🥦", cvetnaya:"🥦", kapusta_b:"🥬", shpinat:"🥬", rukola:"🌿", salat:"🥗",
+  ogurec:"🥒", pomidor:"🍅", perec_kr:"🫑", morkov:"🥕", svekla:"🥗", tykva:"🎃",
+  repa:"🥗", redis:"🥗", kabachok:"🥒", baklazhan:"🍆", luk:"🧅", chesnok:"🧄",
+  imbir:"🫚", seller:"🥬", sparzha:"🌿", fasol_str:"🌿", gribi:"🍄", kapusta_kv:"🥬",
+  petrushka:"🌿",
+  kurica_gr:"🍗", kurica_bedro:"🍗", indeyka:"🍗", govyadina:"🥩", baranina:"🥩",
+  svinina:"🥩", losos:"🐟", treska:"🐟", skumbriya:"🐟", seld:"🐟", tunets:"🐟",
+  krevetki:"🦐", kalmar:"🦑", yayco:"🥚", tvorog:"🥛", yogurt_n:"🥛", syr_tv:"🧀",
+  syr_fet:"🧀", tofu:"🟫", tempe:"🟫",
+  grechka:"🌾", ovsyanka:"🥣", ris_buryi:"🍚", ris_bel:"🍚", kinoa:"🌾",
+  bulgur:"🌾", kuskus:"🌾", pshenka:"🌾", polba:"🌾", hleb_rzhanoi:"🍞",
+  hleb_cz:"🍞", kartofel_zap:"🥔", batat:"🍠", makarony_cz:"🍝", ris_dik:"🍚",
+  chechevica_kr:"🫘", chechevica_z:"🫘", nut:"🫘", mash:"🫘", fasol_b:"🫘",
+  fasol_kr:"🫘", goroh:"🫘", edamame:"🫛",
+  avokado:"🥑", orehi_gr:"🌰", mindal:"🌰", kedr:"🌰", funduk:"🌰", kashew:"🌰",
+  len_sem:"🌱", chia:"🌱", tikv_sem:"🌱", podsoln_sem:"🌻", kunzhut:"🌱",
+  maslo_olive:"🫒", maslo_kokos:"🥥", maslo_lnyan:"🌱",
+  yabloko:"🍎", grusha:"🍐", banana:"🍌", apelsin:"🍊", limon:"🍋",
+  chernika:"🫐", malina:"🫐", klubnika:"🍓", granat:"🍎", hurma:"🍊",
+  zelen_pesto:"🌿", gomasio:"🌱", miso:"🍶", kurkuma:"🌶", koriza:"🌶",
+  kardamon:"🌶", yabloch_uksus:"🍯", tahini:"🥜", yogurtnyi_souce:"🥛", hummus:"🫘"
+};
+
+const CATEGORIES = [
+  {id:"all", name:"Все"},
+  {id:"vegetables", name:"Овощи и зелень"},
+  {id:"proteins", name:"Белки"},
+  {id:"grains", name:"Крупы и углеводы"},
+  {id:"legumes", name:"Бобовые"},
+  {id:"fats_seeds", name:"Жиры и семена"},
+  {id:"fruits", name:"Фрукты и ягоды"},
+  {id:"sauces", name:"Соусы и добавки"},
+];
+
+const GOALS = [
+  {id:"energy", name:"Больше энергии", emoji:"⚡", desc:"Стабильная энергия без скачков"},
+  {id:"satiety", name:"Сытость", emoji:"🌾", desc:"Дольше оставаться сытым"},
+  {id:"weight_loss", name:"Похудение", emoji:"🌿", desc:"Лёгкий объём, больше клетчатки"},
+  {id:"gut", name:"Здоровье ЖКТ", emoji:"🤍", desc:"Мягко для пищеварения"},
+  {id:"antiinflam", name:"Анти-воспалительный фокус", emoji:"🍂", desc:"Цвет, омега-3, специи"},
+  {id:"maintain", name:"Поддержание веса", emoji:"⚖️", desc:"Сбалансированный baseline"},
+];
+
+const DIETS = [
+  {id:"any", name:"Обычное питание", emoji:"🍽"},
+  {id:"vegetarian", name:"Вегетарианское", emoji:"🥗"},
+  {id:"pescetarian", name:"Пескетарианское", emoji:"🐟"},
+  {id:"dairyFree", name:"Без молочного", emoji:"🥛"},
+  {id:"glutenFree", name:"Без глютена", emoji:"🌾"},
+  {id:"other", name:"Другое", emoji:"✨"},
+];
+
+const TCM_PREFS = [
+  {id:"warming", name:"Согревающая", emoji:"🔥", desc:"Готовое, тёплое, со специями"},
+  {id:"neutral", name:"Нейтральная", emoji:"⚪", desc:"Без выраженных акцентов"},
+  {id:"cooling", name:"Охлаждающая", emoji:"❄️", desc:"Сочное, лёгкое, свежее"},
+  {id:"spleen", name:"Поддержка селезёнки", emoji:"🌾", desc:"Тёплые крупы, тыквенные"},
+  {id:"digestion", name:"Поддержка пищеварения", emoji:"🌱", desc:"Специи, ферментация, имбирь"},
+  {id:"less_damp", name:"Уменьшить сырость", emoji:"🍂", desc:"Меньше холодного и сладкого"},
+  {id:"gentle", name:"Мягкий режим", emoji:"🤍", desc:"Готовое, тёплое, не резкое"},
+];
+
+const DEMO_PROFILES = {
+  energy: {
+    name:"Хочу больше энергии",
+    state:{
+      goal:"energy",
+      diet:"any",
+      tcm:["warming","spleen"],
+      liked:["grechka","losos","brokkoli","batat","avokado","kurkuma"],
+      disliked:[],
+      avoid:[],
+      allergies:[],
+    }
+  },
+  gentle_gut: {
+    name:"Мягко для ЖКТ",
+    state:{
+      goal:"gut",
+      diet:"any",
+      tcm:["gentle","digestion","warming"],
+      liked:["ovsyanka","kabachok","treska","tykva","imbir","yabloko"],
+      disliked:["baklazhan"],
+      avoid:["chesnok"],
+      allergies:[],
+    }
+  },
+  warming_day: {
+    name:"Согревающий день",
+    state:{
+      goal:"satiety",
+      diet:"any",
+      tcm:["warming","spleen","less_damp"],
+      liked:["tykva","kurica_bedro","grechka","imbir","koriza","miso"],
+      disliked:[],
+      avoid:[],
+      allergies:[],
+    }
+  },
+  df_gf: {
+    name:"Без молочного и без глютена",
+    state:{
+      goal:"maintain",
+      diet:"dairyFree",
+      diet2:"glutenFree",
+      tcm:["neutral"],
+      liked:["kinoa","losos","brokkoli","avokado","batat","chia"],
+      disliked:[],
+      avoid:[],
+      allergies:[],
+    }
+  }
+};
+
+/* ============ STATE ============ */
+const state = {
+  goal: null,
+  diet: "any",
+  diet2: null,
+  tcm: [],
+  liked: new Set(),
+  disliked: new Set(),
+  avoid: new Set(),
+  allergies: new Set(),
+  plate: [],        // {pid, zone, portion: 's'|'m'|'l'}
+  pantry: new Set(),
+  activeTab: "build",
+  activeCat: "all",
+  activePantryCat: "all",
+  search: "",
+  pantrySearch: "",
+  ideas: [],
+  onboardingDone: false,
+};
+
+const productById = {};
+PRODUCTS.forEach(p => { productById[p.id] = p; });
+
+/* ============ UTILS ============ */
+const $ = sel => document.querySelector(sel);
+const $$ = sel => document.querySelectorAll(sel);
+
+function emoji(p){ return EMOJI[p.id] || "·"; }
+
+function isAllowed(p){
+  // dietary restrictions
+  if (state.diet === "vegetarian" && !p.vegetarian) return false;
+  if (state.diet === "pescetarian"){
+    if (p.cat==="proteins" && !["рыба","морепродукты","яйца","молочные","растительные"].includes(p.sub)) return false;
+  }
+  if (state.diet === "dairyFree" && !p.dairyFree) return false;
+  if (state.diet === "glutenFree" && !p.glutenFree) return false;
+  if (state.diet2 === "dairyFree" && !p.dairyFree) return false;
+  if (state.diet2 === "glutenFree" && !p.glutenFree) return false;
+  if (state.allergies.has(p.id)) return false;
+  if (state.avoid.has(p.id)) return false;
+  return true;
+}
+
+function isDisliked(p){ return state.disliked.has(p.id); }
+function isLiked(p){ return state.liked.has(p.id); }
+
+function pickProducts(filter, limit=6){
+  const candidates = PRODUCTS.filter(p => isAllowed(p) && !isDisliked(p) && filter(p));
+  // favor liked
+  candidates.sort((a,b)=> (isLiked(b)?1:0)-(isLiked(a)?1:0));
+  return candidates.slice(0, limit);
+}
+
+function toast(msg){
+  const t = $("#toast");
+  t.textContent = msg;
+  t.classList.add("show");
+  clearTimeout(t._tm);
+  t._tm = setTimeout(()=>t.classList.remove("show"), 2200);
+}
+
+/* ============ ONBOARDING ============ */
+
+const ONB_STEPS = ["goal","diet","tcm","favorites","summary"];
+
+function openOnb(stepIdx=0){
+  state._onbStep = stepIdx;
+  $("#onb").classList.add("open");
+  renderOnb();
+}
+function closeOnb(){
+  $("#onb").classList.remove("open");
+  state.onboardingDone = true;
+  renderAll();
+}
+
+function renderOnb(){
+  const i = state._onbStep;
+  const step = ONB_STEPS[i];
+  $("#onb-progress").textContent = `Шаг ${i+1} из ${ONB_STEPS.length}`;
+  const c = $("#onb-content");
+
+  if (step === "goal"){
+    c.innerHTML = `
+      <div class="step">
+        <h2 id="onb-title">Что вам важнее сегодня?</h2>
+        <p class="lead">Выберите главную цель — мы подберём акценты на тарелке. Можно изменить в любой момент.</p>
+        <div class="demo-row" id="demo-row"></div>
+        <div class="opt-grid cols-2" id="goal-opts"></div>
+        <div class="step-actions">
+          <button class="btn-ghost qa-btn" id="onb-back" style="visibility:hidden">← Назад</button>
+          <button class="btn" id="onb-next">Далее →</button>
+        </div>
+      </div>`;
+    const demoRow = c.querySelector("#demo-row");
+    Object.entries(DEMO_PROFILES).forEach(([id,p])=>{
+      const b = document.createElement("button");
+      b.className = "demo-chip";
+      b.textContent = "✨ " + p.name;
+      b.onclick = ()=> applyDemoProfile(id);
+      demoRow.appendChild(b);
+    });
+    const opts = c.querySelector("#goal-opts");
+    GOALS.forEach(g=>{
+      const b = document.createElement("button");
+      b.className = "opt";
+      b.setAttribute("aria-pressed", state.goal === g.id ? "true":"false");
+      b.innerHTML = `<span class="opt-emoji">${g.emoji}</span><div class="opt-text"><span class="opt-name">${g.name}</span><span class="opt-desc">${g.desc}</span></div>`;
+      b.onclick = ()=>{ state.goal = g.id; renderOnb(); };
+      opts.appendChild(b);
+    });
+    c.querySelector("#onb-next").onclick = ()=> nextStep();
+  }
+
+  else if (step === "diet"){
+    c.innerHTML = `
+      <div class="step">
+        <h2 id="onb-title">Как вы обычно питаетесь?</h2>
+        <p class="lead">Это поможет не предлагать то, что вам не подходит.</p>
+        <div class="opt-grid cols-2" id="diet-opts"></div>
+        <div class="step-actions">
+          <button class="btn-ghost qa-btn" id="onb-back">← Назад</button>
+          <button class="btn" id="onb-next">Далее →</button>
+        </div>
+      </div>`;
+    const opts = c.querySelector("#diet-opts");
+    DIETS.forEach(d=>{
+      const b = document.createElement("button");
+      b.className = "opt";
+      b.setAttribute("aria-pressed", state.diet === d.id ? "true":"false");
+      b.innerHTML = `<span class="opt-emoji">${d.emoji}</span><div class="opt-text"><span class="opt-name">${d.name}</span></div>`;
+      b.onclick = ()=>{ state.diet = d.id; renderOnb(); };
+      opts.appendChild(b);
+    });
+    c.querySelector("#onb-back").onclick = ()=> prevStep();
+    c.querySelector("#onb-next").onclick = ()=> nextStep();
+  }
+
+  else if (step === "tcm"){
+    c.innerHTML = `
+      <div class="step">
+        <h2 id="onb-title">Пожелания по ТКМ</h2>
+        <p class="lead">Можно выбрать несколько — или пропустить, если не привычно.</p>
+        <div class="opt-grid" id="tcm-opts"></div>
+        <div class="step-actions">
+          <button class="btn-ghost qa-btn" id="onb-back">← Назад</button>
+          <button class="btn" id="onb-next">Далее →</button>
+        </div>
+      </div>`;
+    const opts = c.querySelector("#tcm-opts");
+    TCM_PREFS.forEach(t=>{
+      const b = document.createElement("button");
+      b.className = "opt";
+      b.setAttribute("aria-pressed", state.tcm.includes(t.id) ? "true":"false");
+      b.innerHTML = `<span class="opt-emoji">${t.emoji}</span><div class="opt-text"><span class="opt-name">${t.name}</span><span class="opt-desc">${t.desc}</span></div>`;
+      b.onclick = ()=>{
+        const i = state.tcm.indexOf(t.id);
+        if (i>=0) state.tcm.splice(i,1); else state.tcm.push(t.id);
+        renderOnb();
+      };
+      opts.appendChild(b);
+    });
+    c.querySelector("#onb-back").onclick = ()=> prevStep();
+    c.querySelector("#onb-next").onclick = ()=> nextStep();
+  }
+
+  else if (step === "favorites"){
+    c.innerHTML = `
+      <div class="step">
+        <h2 id="onb-title">Любимое и нелюбимое</h2>
+        <p class="lead">Отметьте несколько продуктов: <span style="color:var(--ok)">люблю</span>, <span style="color:var(--terra-2)">не люблю</span>, <span style="color:var(--ink-3)">избегаю</span>. По клику переключается.</p>
+        <div style="display:flex;gap:6px;margin-bottom:12px">
+          <select id="fav-cat" class="search-input" style="padding:9px 12px"></select>
+        </div>
+        <div class="chips" id="fav-chips" style="max-height:300px"></div>
+        <div class="step-actions" style="margin-top:14px">
+          <button class="btn-ghost qa-btn" id="onb-back">← Назад</button>
+          <button class="btn" id="onb-next">Далее →</button>
+        </div>
+      </div>`;
+    const sel = c.querySelector("#fav-cat");
+    CATEGORIES.forEach(cat=>{
+      const o = document.createElement("option");
+      o.value = cat.id; o.textContent = cat.name; sel.appendChild(o);
+    });
+    let activeCat = "all";
+    sel.value = activeCat;
+    const chipsBox = c.querySelector("#fav-chips");
+    function renderFavChips(){
+      chipsBox.innerHTML = "";
+      const list = PRODUCTS.filter(p => activeCat==="all" || p.cat===activeCat);
+      list.forEach(p=>{
+        const b = document.createElement("button");
+        b.className = "chip";
+        let mark = "";
+        if (state.liked.has(p.id)){ b.style.background="#e9efd6"; b.style.borderColor="var(--ok)"; mark="♥ "; }
+        else if (state.disliked.has(p.id)){ b.style.background="#f5e0d8"; b.style.borderColor="var(--terra)"; mark="✕ "; }
+        else if (state.avoid.has(p.id)){ b.style.opacity=".5"; mark="○ "; }
+        b.innerHTML = `<span class="emoji">${emoji(p)}</span>${mark}${p.name}`;
+        b.onclick = ()=>{
+          if (state.liked.has(p.id)){ state.liked.delete(p.id); state.disliked.add(p.id); }
+          else if (state.disliked.has(p.id)){ state.disliked.delete(p.id); state.avoid.add(p.id); }
+          else if (state.avoid.has(p.id)){ state.avoid.delete(p.id); }
+          else { state.liked.add(p.id); }
+          renderFavChips();
+        };
+        chipsBox.appendChild(b);
+      });
+    }
+    sel.onchange = ()=>{ activeCat = sel.value; renderFavChips(); };
+    renderFavChips();
+    c.querySelector("#onb-back").onclick = ()=> prevStep();
+    c.querySelector("#onb-next").onclick = ()=> nextStep();
+  }
+
+  else if (step === "summary"){
+    const goalName = (GOALS.find(g=>g.id===state.goal)||{}).name || "Не выбрано";
+    const dietName = (DIETS.find(d=>d.id===state.diet)||{}).name || "Обычное";
+    const tcmNames = state.tcm.map(t => (TCM_PREFS.find(x=>x.id===t)||{}).name).filter(Boolean).join(", ") || "—";
+    c.innerHTML = `
+      <div class="step">
+        <h2 id="onb-title">Готовы собирать тарелку?</h2>
+        <p class="lead">Вот что мы учли. Можно изменить в любой момент через кнопку «Профиль».</p>
+        <div class="card-soft card" style="padding:16px;margin-bottom:16px">
+          <div style="margin-bottom:6px"><strong>Цель:</strong> ${goalName}</div>
+          <div style="margin-bottom:6px"><strong>Тип питания:</strong> ${dietName}</div>
+          <div style="margin-bottom:6px"><strong>ТКМ:</strong> ${tcmNames}</div>
+          <div><strong>Любимое:</strong> ${state.liked.size}, <strong>не люблю:</strong> ${state.disliked.size}, <strong>избегаю:</strong> ${state.avoid.size}</div>
+        </div>
+        <div class="step-actions">
+          <button class="btn-ghost qa-btn" id="onb-back">← Назад</button>
+          <button class="btn" id="onb-finish">Начать собирать тарелку →</button>
+        </div>
+      </div>`;
+    c.querySelector("#onb-back").onclick = ()=> prevStep();
+    c.querySelector("#onb-finish").onclick = ()=> closeOnb();
+  }
+
+  // Set Back visibility
+  const back = c.querySelector("#onb-back");
+  if (back) back.style.visibility = (i===0 ? "hidden" : "visible");
+}
+
+function nextStep(){
+  if (state._onbStep < ONB_STEPS.length-1){ state._onbStep++; renderOnb(); }
+}
+function prevStep(){
+  if (state._onbStep > 0){ state._onbStep--; renderOnb(); }
+}
+function applyDemoProfile(id){
+  const p = DEMO_PROFILES[id];
+  if (!p) return;
+  state.goal = p.state.goal;
+  state.diet = p.state.diet;
+  state.diet2 = p.state.diet2 || null;
+  state.tcm = [...p.state.tcm];
+  state.liked = new Set(p.state.liked);
+  state.disliked = new Set(p.state.disliked);
+  state.avoid = new Set(p.state.avoid);
+  state.allergies = new Set(p.state.allergies);
+  closeOnb();
+  toast("Профиль «"+p.name+"» применён");
+}
+
+/* ============ PLATE ============ */
+function addToPlate(pid, zone){
+  const p = productById[pid];
+  if (!p) return;
+  const z = zone || p.zone;
+  // avoid duplicates in same zone
+  if (state.plate.some(it => it.pid===pid && it.zone===z)) {
+    toast(p.name+" уже на тарелке"); return;
+  }
+  state.plate.push({pid, zone:z, portion:"m"});
+  renderPlate(); renderScores(); renderInsights(); renderTcm(); renderImprove();
+}
+function removeFromPlate(idx){
+  state.plate.splice(idx,1);
+  renderPlate(); renderScores(); renderInsights(); renderTcm(); renderImprove();
+}
+function setPortion(idx, portion){
+  state.plate[idx].portion = portion;
+  renderPlate(); renderScores(); renderInsights(); renderTcm();
+}
+function moveZone(idx, newZone){
+  state.plate[idx].zone = newZone;
+  renderPlate(); renderScores(); renderInsights();
+}
+
+function renderPlate(){
+  ["veg","protein","carb","extras"].forEach(z=>{
+    const el = document.getElementById("zone-"+z);
+    el.innerHTML = "";
+  });
+  state.plate.forEach((it, idx)=>{
+    const p = productById[it.pid];
+    if (!p) return;
+    const zone = it.zone;
+    const wrap = document.getElementById("zone-"+zone);
+    const el = document.createElement("button");
+    el.className = "plate-item "+zone;
+    el.setAttribute("draggable","true");
+    el.dataset.idx = idx;
+    el.innerHTML = `<span class="emoji">${emoji(p)}</span><span class="nm">${p.name}</span><span class="portion-dot ${it.portion}" title="Порция"></span>`;
+    el.addEventListener("click", e => openPortionPop(e.currentTarget, idx));
+    el.addEventListener("dragstart", e=>{
+      e.dataTransfer.setData("text/plain", String(idx));
+      e.dataTransfer.effectAllowed = "move";
+      el.classList.add("dragging");
+    });
+    el.addEventListener("dragend", ()=> el.classList.remove("dragging"));
+    wrap.appendChild(el);
+  });
+  // empty state communicated by visible zone labels
+}
+
+function setupZoneDnd(){
+  ["veg","protein","carb","extras"].forEach(z=>{
+    const el = document.getElementById("zone-"+z);
+    el.addEventListener("dragover", e=>{ e.preventDefault(); el.classList.add("drag-over"); });
+    el.addEventListener("dragleave", ()=> el.classList.remove("drag-over"));
+    el.addEventListener("drop", e=>{
+      e.preventDefault();
+      el.classList.remove("drag-over");
+      const idx = parseInt(e.dataTransfer.getData("text/plain"));
+      if (!Number.isNaN(idx) && state.plate[idx]){
+        moveZone(idx, z);
+      }
+    });
+  });
+}
+
+function openPortionPop(anchor, idx){
+  const pop = $("#portion-pop");
+  const it = state.plate[idx];
+  const p = productById[it.pid];
+  pop.innerHTML = `
+    <div style="font-size:12px;color:var(--ink-3);padding:6px 10px 2px">Порция: ${p.name}</div>
+    <button data-p="s" aria-pressed="${it.portion==='s'}"><span>Маленькая</span><span class="muted small">${p.portions.s}</span></button>
+    <button data-p="m" aria-pressed="${it.portion==='m'}"><span>Средняя</span><span class="muted small">${p.portions.m}</span></button>
+    <button data-p="l" aria-pressed="${it.portion==='l'}"><span>Большая</span><span class="muted small">${p.portions.l}</span></button>
+    <div class="pop-sep"></div>
+    <div style="font-size:12px;color:var(--ink-3);padding:2px 10px">Перенести в зону</div>
+    <button data-z="veg" aria-pressed="${it.zone==='veg'}">→ Овощи</button>
+    <button data-z="protein" aria-pressed="${it.zone==='protein'}">→ Белок</button>
+    <button data-z="carb" aria-pressed="${it.zone==='carb'}">→ Углеводы</button>
+    <button data-z="extras" aria-pressed="${it.zone==='extras'}">→ Дополнения</button>
+    <div class="pop-sep"></div>
+    <button class="pop-action" data-remove="1">Убрать с тарелки</button>
+  `;
+  const r = anchor.getBoundingClientRect();
+  pop.style.left = Math.min(window.innerWidth - 200, Math.max(10, r.left)) + "px";
+  pop.style.top = (r.bottom + 8) + "px";
+  pop.classList.add("open");
+  pop.querySelectorAll("[data-p]").forEach(b => b.onclick = ()=>{ setPortion(idx, b.dataset.p); closePortionPop(); });
+  pop.querySelectorAll("[data-z]").forEach(b => b.onclick = ()=>{ moveZone(idx, b.dataset.z); closePortionPop(); });
+  pop.querySelector("[data-remove]").onclick = ()=>{ removeFromPlate(idx); closePortionPop(); };
+}
+function closePortionPop(){ $("#portion-pop").classList.remove("open"); }
+document.addEventListener("click", e=>{
+  const pop = $("#portion-pop");
+  if (!pop.contains(e.target) && !e.target.closest(".plate-item")) closePortionPop();
+});
+
+/* ============ LIBRARY ============ */
+function renderCatTabs(containerId, active, onclick){
+  const c = document.getElementById(containerId);
+  c.innerHTML = "";
+  CATEGORIES.forEach(cat=>{
+    const b = document.createElement("button");
+    b.className = "cat-tab";
+    b.setAttribute("aria-selected", cat.id === active ? "true":"false");
+    b.textContent = cat.name;
+    b.onclick = ()=> onclick(cat.id);
+    c.appendChild(b);
+  });
+}
+function renderLibrary(){
+  renderCatTabs("cat-tabs", state.activeCat, id=>{ state.activeCat = id; renderLibrary(); });
+  const term = state.search.trim().toLowerCase();
+  const list = PRODUCTS.filter(p=>{
+    if (state.activeCat !== "all" && p.cat !== state.activeCat) return false;
+    if (term && !p.name.toLowerCase().includes(term) && !p.sub.toLowerCase().includes(term)) return false;
+    return true;
+  });
+  $("#lib-count").textContent = list.length + " из " + PRODUCTS.length;
+  const c = $("#lib-chips");
+  c.innerHTML = "";
+  list.forEach(p=>{
+    const b = document.createElement("button");
+    const disabled = !isAllowed(p);
+    b.className = "chip" + (isLiked(p)?" fav":"") + (disabled?" disabled":"");
+    b.innerHTML = `<span class="emoji">${emoji(p)}</span><span class="therm ${p.thermal}"></span>${p.name}<span class="plus">+</span>`;
+    b.title = disabled ? "Не подходит по вашим настройкам" : "Добавить на тарелку";
+    if (!disabled){
+      b.onclick = ()=> addToPlate(p.id);
+    }
+    c.appendChild(b);
+  });
+  if (list.length === 0){
+    c.innerHTML = `<div class="empty"><p>Ничего не нашлось. Попробуйте другой запрос.</p></div>`;
+  }
+}
+
+/* ============ SCORES ============ */
+function plateMeta(){
+  // returns aggregated metrics from plate
+  const weights = {s:.6, m:1, l:1.5};
+  let veg=0, protein=0, carb=0, extras=0;
+  let fiber=0, satiety=0, gut=0, warm=0, total=0;
+  let warming=0, cooling=0, neutral=0;
+  let damp=0;
+  const cats = new Set();
+  const subs = new Set();
+
+  state.plate.forEach(it=>{
+    const p = productById[it.pid]; if(!p) return;
+    const w = weights[it.portion] || 1;
+    if (it.zone==="veg") veg += w;
+    else if (it.zone==="protein") protein += w;
+    else if (it.zone==="carb") carb += w;
+    else extras += w;
+
+    if (p.tags.includes("клетчатка")) fiber += w*1.2;
+    if (p.tags.includes("белок")) satiety += w*1.0;
+    if (p.tags.includes("сложные углеводы")) satiety += w*0.7;
+    if (p.tags.includes("полезные жиры")) satiety += w*0.6;
+    satiety += (p.satiety/10) * w * 0.5;
+    gut += (p.gutGentle/10) * w;
+    warm += ((p.warming-5)/5) * w;
+    if (p.thermal==="warming") warming += w;
+    else if (p.thermal==="cooling") cooling += w;
+    else neutral += w;
+    if (p.effects.includes("damp")) damp += w;
+    total += w;
+    cats.add(p.cat);
+    subs.add(p.sub);
+  });
+
+  // Balance score 0–100
+  const target = {veg:2, protein:1, carb:1, extras:.5};
+  const total_z = veg+protein+carb+extras || 1;
+  const ideal_total = target.veg+target.protein+target.carb+target.extras;
+  // Normalize present zones against target ratios
+  function score_zone(actual, ideal){
+    const ratio_actual = actual/total_z;
+    const ratio_ideal = ideal/ideal_total;
+    const diff = Math.abs(ratio_actual - ratio_ideal);
+    return Math.max(0, 1 - diff*1.6);
+  }
+  let balance = 0;
+  if (state.plate.length){
+    balance = (
+      score_zone(veg, target.veg) * 0.40 +
+      score_zone(protein, target.protein) * 0.25 +
+      score_zone(carb, target.carb) * 0.20 +
+      score_zone(extras, target.extras) * 0.15
+    ) * 100;
+    // Penalty if zone missing entirely
+    if (veg===0) balance -= 20;
+    if (protein===0) balance -= 15;
+    if (carb===0) balance -= 10;
+    balance = Math.max(0, Math.min(100, balance));
+  }
+
+  const fiberScore = Math.min(100, Math.round(fiber * 22));
+  const satietyScore = Math.min(100, Math.round(satiety * 18));
+  const gutScore = total ? Math.min(100, Math.round((gut/total) * 100)) : 0;
+  const warmthRaw = total ? warm/total : 0; // -1..+1
+  const warmthScore = Math.round((warmthRaw + 1) * 50);
+
+  return {
+    veg, protein, carb, extras, total,
+    balance: Math.round(balance),
+    fiber: fiberScore,
+    satiety: satietyScore,
+    gut: gutScore,
+    warmth: warmthScore,
+    warmthRaw,
+    warming, cooling, neutral, damp,
+    cats, subs
+  };
+}
+
+function renderScores(){
+  const m = plateMeta();
+  const c = $("#scores");
+  const items = [
+    {name:"Баланс по Гарварду", val:m.balance, cls:""},
+    {name:"Сытость", val:m.satiety, cls:"sat"},
+    {name:"Клетчатка", val:m.fiber, cls:"fib"},
+    {name:"Мягкость для ЖКТ", val:m.gut, cls:"gut"},
+    {name:"Теплота по ТКМ", val:m.warmth, cls: m.warmthRaw > 0.1 ? "warm" : m.warmthRaw < -0.1 ? "cool" : "" },
+  ];
+  c.innerHTML = items.map(it => `
+    <div class="score">
+      <div class="score-row"><span class="score-name">${it.name}</span><span class="score-val">${labelForScore(it.name, it.val, m)}</span></div>
+      <div class="bar"><div class="bar-fill ${it.cls}" style="width:${Math.max(4, it.val)}%"></div></div>
+    </div>
+  `).join("");
+}
+
+function labelForScore(name, val, m){
+  if (name === "Теплота по ТКМ"){
+    if (m.warmthRaw > 0.25) return "согревающая";
+    if (m.warmthRaw < -0.25) return "охлаждающая";
+    return "нейтральная";
+  }
+  if (val >= 80) return "отлично";
+  if (val >= 60) return "хорошо";
+  if (val >= 35) return "можно усилить";
+  return "пока мало";
+}
+
+/* ============ INSIGHTS ============ */
+function renderInsights(){
+  const m = plateMeta();
+  const tips = [];
+  if (state.plate.length === 0){
+    tips.push({type:"tip", text:"Тарелка пустая. Начните с овощей — это половина тарелки."});
+  } else {
+    if (m.veg >= 1.6) tips.push({type:"good", text:"Хорошая овощная база — половина тарелки занята овощами."});
+    else if (m.veg > 0) tips.push({type:"warn", text:"Овощей пока мало — добавьте ещё одну порцию, чтобы заполнить половину тарелки."});
+    else tips.push({type:"warn", text:"Не хватает овощей. Это половина тарелки по Гарварду."});
+
+    if (m.protein >= 1) tips.push({type:"good", text:"Белок есть — это даст сытость и опору."});
+    else tips.push({type:"warn", text:"Не хватает белка. Добавьте рыбу, птицу, тофу или бобовые."});
+
+    if (m.carb >= 1) tips.push({type:"good", text:"Сложные углеводы на месте — будет ровная энергия."});
+    else tips.push({type:"warn", text:"Не хватает сложных углеводов. Гречка, киноа, батат — хорошие варианты."});
+
+    if (m.fiber >= 60) tips.push({type:"good", text:"Клетчатки достаточно — мягкая поддержка пищеварения."});
+    else if (state.plate.length > 2) tips.push({type:"tip", text:"Можно усилить клетчатку зеленью, семенами или бобовыми."});
+
+    if (state.goal === "satiety" && m.satiety < 55) tips.push({type:"tip", text:"Под цель «сытость» добавьте белок, полезные жиры или цельные крупы."});
+    if (state.goal === "energy" && m.carb < 1) tips.push({type:"tip", text:"Под цель «энергия» добавьте сложные углеводы — гречку, киноа или батат."});
+    if (state.goal === "weight_loss" && m.veg < 1.6) tips.push({type:"tip", text:"Под цель «лёгкость» сделайте половину тарелки овощами."});
+    if (state.goal === "gut" && m.gut < 65) tips.push({type:"tip", text:"Под фокус ЖКТ выбирайте тушёное, варёное, без сырых крестоцветных в больших количествах."});
+    if (state.goal === "antiinflam"){
+      const hasOmega = state.plate.some(it=>{
+        const p = productById[it.pid]; return p && (p.id==="losos"||p.id==="skumbriya"||p.id==="seld"||p.id==="len_sem"||p.id==="chia"||p.id==="orehi_gr");
+      });
+      if (!hasOmega) tips.push({type:"tip", text:"Под анти-воспалительный фокус добавьте источник омега-3: лосось, скумбрия, лён или чиа."});
+    }
+
+    // TCM
+    if (state.tcm.includes("warming") && m.warmthRaw < -0.05) tips.push({type:"tip", text:"Тарелка получается прохладной. Добавьте тёплые овощи, специи или согревающий белок."});
+    if (state.tcm.includes("less_damp") && m.damp >= 2) tips.push({type:"tip", text:"По ТКМ есть продукты с возможной сыростью. Замените часть на крупы и тушёные овощи."});
+  }
+  const c = $("#insights");
+  c.innerHTML = tips.map(t => `<div class="insight ${t.type}"><span class="insight-dot"></span><span>${t.text}</span></div>`).join("");
+}
+
+/* ============ TCM BLOCK ============ */
+function renderTcm(){
+  const m = plateMeta();
+  if (state.plate.length === 0){
+    $("#tcm-body").textContent = "Когда соберёте тарелку, здесь появится мягкий взгляд ТКМ: согревающая, нейтральная или охлаждающая, поддержка пищеварения и комфорт.";
+    return;
+  }
+  const parts = [];
+  if (m.warmthRaw > 0.2) parts.push("Тарелка ощущается согревающей — хорошо для прохладной погоды и комфорта.");
+  else if (m.warmthRaw < -0.2) parts.push("Тарелка ощущается охлаждающей — освежает, подходит для тёплого времени.");
+  else parts.push("По ощущению тарелка нейтральная — спокойный баланс.");
+
+  // digestion signal
+  const digestionCnt = state.plate.filter(it=>{
+    const p = productById[it.pid]; return p && p.effects.includes("digestion");
+  }).length;
+  if (digestionCnt >= 2) parts.push("Есть мягкая поддержка пищеварения — специи и тёплые овощи работают вместе.");
+
+  if (m.damp >= 2) parts.push("Несколько продуктов могут усиливать сырость — баланс можно дать тёплыми крупами или имбирём.");
+
+  const moisten = state.plate.filter(it=>{
+    const p = productById[it.pid]; return p && p.effects.includes("moistening");
+  }).length;
+  if (moisten >= 2) parts.push("Увлажняющие продукты тоже на месте — хорошо в сухой сезон.");
+
+  $("#tcm-body").textContent = parts.join(" ");
+}
+
+/* ============ QUICK ACTIONS ============ */
+function quickAction(action){
+  // build a filter per action
+  const filters = {
+    fiber: p => p.tags.includes("клетчатка") && (p.cat==="vegetables"||p.cat==="legumes"||p.cat==="fats_seeds"),
+    satiety: p => p.tags.includes("белок") || p.tags.includes("сложные углеводы") || p.tags.includes("полезные жиры"),
+    gut: p => p.gutGentle >= 7 && p.thermal !== "cooling",
+    warmer: p => p.thermal === "warming" || p.warming >= 7,
+    "less-sweet": p => !(p.cat === "fruits") && !(p.id==="batat"||p.id==="kartofel_zap"),
+    "less-damp": p => !p.effects.includes("damp") && !p.effects.includes("moistening"),
+  };
+  const onPlate = new Set(state.plate.map(it=>it.pid));
+  const picks = pickProducts(p => filters[action](p) && !onPlate.has(p.id), 5);
+  if (picks.length === 0){ toast("Уже хорошо — добавлять нечего"); return; }
+
+  // Show inline suggestions in a temporary popover-like card
+  showSuggestion(action, picks);
+}
+
+const ACTION_LABEL = {
+  fiber: "Добавить клетчатку",
+  satiety: "Усилить сытость",
+  gut: "Мягче для ЖКТ",
+  warmer: "Теплее по ТКМ",
+  "less-sweet": "Меньше сладкой нагрузки",
+  "less-damp": "Снизить сырость по ТКМ",
+};
+
+function showSuggestion(action, picks){
+  const c = $("#insights");
+  const existing = document.getElementById("qa-suggestion");
+  if (existing) existing.remove();
+  const wrap = document.createElement("div");
+  wrap.id = "qa-suggestion";
+  wrap.className = "improve-suggestion";
+  wrap.style.marginTop = "10px";
+  wrap.innerHTML = `<h4>${ACTION_LABEL[action]}: попробуйте</h4><div class="add-row"></div>`;
+  const row = wrap.querySelector(".add-row");
+  picks.forEach(p=>{
+    const b = document.createElement("button");
+    b.className = "chip" + (isLiked(p) ? " fav":"");
+    b.innerHTML = `<span class="emoji">${emoji(p)}</span><span class="therm ${p.thermal}"></span>${p.name}<span class="plus">+</span>`;
+    b.onclick = ()=>{ addToPlate(p.id); wrap.remove(); };
+    row.appendChild(b);
+  });
+  c.appendChild(wrap);
+}
+
+/* ============ IMPROVE TAB ============ */
+function renderImprove(){
+  const m = plateMeta();
+  const current = $("#improve-current");
+  if (state.plate.length === 0){
+    current.innerHTML = `<div class="empty"><p>Сначала соберите тарелку на первой вкладке. Здесь покажем точечные улучшения.</p></div>`;
+    $("#improve-suggestions").innerHTML = "";
+    return;
+  }
+  const grouped = {veg:[],protein:[],carb:[],extras:[]};
+  state.plate.forEach(it => grouped[it.zone].push(it));
+  const zoneNames = {veg:"½ Овощи",protein:"¼ Белок",carb:"¼ Углеводы",extras:"Дополнения"};
+  current.innerHTML = Object.entries(grouped).map(([z, items])=>{
+    if (items.length === 0) return "";
+    return `<div class="section-block"><h3>${zoneNames[z]}</h3><div class="row">${
+      items.map(it=>{
+        const p = productById[it.pid];
+        return `<span class="chip"><span class="emoji">${emoji(p)}</span><span class="therm ${p.thermal}"></span>${p.name}</span>`;
+      }).join("")
+    }</div></div>`;
+  }).join("");
+
+  // Suggestions
+  const sBox = $("#improve-suggestions");
+  const suggestions = [];
+  const onPlate = new Set(state.plate.map(it=>it.pid));
+  if (m.veg < 1.6){
+    suggestions.push({
+      title:"Добавить ещё овощей (½ тарелки)",
+      picks: pickProducts(p => p.cat==="vegetables" && !onPlate.has(p.id), 5),
+      zone:"veg"
+    });
+  }
+  if (m.protein < 1){
+    suggestions.push({
+      title:"Усилить белок",
+      picks: pickProducts(p => (p.cat==="proteins"||p.cat==="legumes") && !onPlate.has(p.id), 5),
+      zone:"protein"
+    });
+  }
+  if (m.carb < 1){
+    suggestions.push({
+      title:"Добавить сложные углеводы",
+      picks: pickProducts(p => p.cat==="grains" && !onPlate.has(p.id), 5),
+      zone:"carb"
+    });
+  }
+  if (m.fiber < 60){
+    suggestions.push({
+      title:"Больше клетчатки",
+      picks: pickProducts(p => p.tags.includes("клетчатка") && !onPlate.has(p.id), 5),
+      zone:null
+    });
+  }
+  if (state.tcm.includes("warming") && m.warmthRaw < 0){
+    suggestions.push({
+      title:"Сделать теплее по ТКМ",
+      picks: pickProducts(p => p.thermal==="warming" && !onPlate.has(p.id), 5),
+      zone:null
+    });
+  }
+  if (state.goal === "antiinflam"){
+    const hasOmega = state.plate.some(it=> ["losos","skumbriya","seld","len_sem","chia","orehi_gr"].includes(it.pid));
+    if (!hasOmega){
+      suggestions.push({
+        title:"Анти-воспалительный фокус: омега-3 и цвет",
+        picks: pickProducts(p => ["losos","skumbriya","seld","len_sem","chia","orehi_gr","chernika","kurkuma","svekla"].includes(p.id) && !onPlate.has(p.id), 5),
+        zone:null
+      });
+    }
+  }
+
+  if (suggestions.length === 0){
+    sBox.innerHTML = `<div class="insight good"><span class="insight-dot"></span><span>Хороший баланс! Точечных улучшений нет — тарелка дружелюбная под вашу цель.</span></div>`;
+    return;
+  }
+  sBox.innerHTML = "";
+  suggestions.forEach(s=>{
+    const div = document.createElement("div");
+    div.className = "improve-suggestion";
+    div.innerHTML = `<h4>${s.title}</h4><div class="add-row"></div>`;
+    const row = div.querySelector(".add-row");
+    s.picks.forEach(p=>{
+      const b = document.createElement("button");
+      b.className = "chip" + (isLiked(p) ? " fav":"");
+      b.innerHTML = `<span class="emoji">${emoji(p)}</span><span class="therm ${p.thermal}"></span>${p.name}<span class="plus">+</span>`;
+      b.onclick = ()=>{
+        addToPlate(p.id, s.zone || p.zone);
+        renderImprove();
+      };
+      row.appendChild(b);
+    });
+    if (s.picks.length === 0){
+      div.querySelector(".add-row").innerHTML = `<span class="muted small">Подходящих вариантов под ваши настройки не нашлось.</span>`;
+    }
+    sBox.appendChild(div);
+  });
+}
+
+/* ============ IDEAS TAB ============ */
+function renderPantry(){
+  renderCatTabs("pantry-cat-tabs", state.activePantryCat, id=>{ state.activePantryCat = id; renderPantry(); });
+  const term = state.pantrySearch.trim().toLowerCase();
+  const list = PRODUCTS.filter(p=>{
+    if (state.activePantryCat !== "all" && p.cat !== state.activePantryCat) return false;
+    if (term && !p.name.toLowerCase().includes(term)) return false;
+    return true;
+  });
+  const c = $("#pantry-chips");
+  c.innerHTML = "";
+  list.forEach(p=>{
+    const b = document.createElement("button");
+    const inBag = state.pantry.has(p.id);
+    const disabled = !isAllowed(p);
+    b.className = "chip" + (inBag ? " fav":"") + (disabled ? " disabled":"");
+    b.innerHTML = `<span class="emoji">${emoji(p)}</span>${inBag ? "✓ " : ""}${p.name}`;
+    if (!disabled){
+      b.onclick = ()=>{
+        if (inBag) state.pantry.delete(p.id); else state.pantry.add(p.id);
+        renderPantry(); renderPantryBag();
+      };
+    }
+    c.appendChild(b);
+  });
+}
+function renderPantryBag(){
+  const bag = $("#pantry-bag");
+  if (state.pantry.size === 0){
+    bag.innerHTML = `<span class="pantry-empty">Пока ничего не отмечено</span>`;
+    return;
+  }
+  bag.innerHTML = "";
+  [...state.pantry].forEach(pid=>{
+    const p = productById[pid]; if(!p) return;
+    const b = document.createElement("button");
+    b.className = "chip";
+    b.innerHTML = `<span class="emoji">${emoji(p)}</span>${p.name}<span class="plus">×</span>`;
+    b.onclick = ()=>{ state.pantry.delete(pid); renderPantry(); renderPantryBag(); };
+    bag.appendChild(b);
+  });
+}
+function generateIdeas(){
+  const pantry = [...state.pantry].map(id=>productById[id]).filter(p=>p && isAllowed(p));
+  if (pantry.length < 3){
+    toast("Отметьте хотя бы 3 продукта");
+    return;
+  }
+  // Build idea: try to fill veg/protein/carb from pantry, supplement with allowed picks
+  const byZone = {veg:[],protein:[],carb:[],extras:[]};
+  pantry.forEach(p => byZone[p.zone].push(p));
+
+  const ideas = [];
+  for (let i=0;i<5;i++){
+    const items = [];
+    // pick 2 veg
+    const vegPool = [...byZone.veg];
+    shuffle(vegPool);
+    if (vegPool.length > 0) items.push({p:vegPool[0], zone:"veg", portion:"m"});
+    if (vegPool.length > 1) items.push({p:vegPool[1], zone:"veg", portion:"m"});
+
+    const protPool = [...byZone.protein];
+    shuffle(protPool);
+    if (protPool.length > 0) items.push({p:protPool[0], zone:"protein", portion:"m"});
+
+    const carbPool = [...byZone.carb];
+    shuffle(carbPool);
+    if (carbPool.length > 0) items.push({p:carbPool[0], zone:"carb", portion:"m"});
+
+    const extrasPool = [...byZone.extras];
+    shuffle(extrasPool);
+    if (extrasPool.length > 0) items.push({p:extrasPool[0], zone:"extras", portion:"s"});
+
+    // Fill missing zones from full DB (allowed, liked-preferred)
+    if (!items.some(x=>x.zone==="veg")){
+      const ex = pickProducts(p=>p.zone==="veg",1)[0];
+      if (ex) items.push({p:ex, zone:"veg", portion:"m", _suppl:true});
+    }
+    if (!items.some(x=>x.zone==="protein")){
+      const ex = pickProducts(p=>p.zone==="protein",1)[0];
+      if (ex) items.push({p:ex, zone:"protein", portion:"m", _suppl:true});
+    }
+    if (!items.some(x=>x.zone==="carb")){
+      const ex = pickProducts(p=>p.zone==="carb",1)[0];
+      if (ex) items.push({p:ex, zone:"carb", portion:"m", _suppl:true});
+    }
+
+    if (items.length < 3) continue;
+    ideas.push(items);
+    // dedupe-ish: rotate pools so different ideas
+    if (byZone.veg.length > 1) byZone.veg.push(byZone.veg.shift());
+    if (byZone.protein.length > 1) byZone.protein.push(byZone.protein.shift());
+    if (byZone.carb.length > 1) byZone.carb.push(byZone.carb.shift());
+  }
+
+  // Render ideas
+  const c = $("#ideas-list");
+  if (ideas.length === 0){
+    c.innerHTML = `<div class="empty"><p>Из этого набора пока не складывается полноценная тарелка. Добавьте белок или крупу.</p></div>`;
+    return;
+  }
+  c.innerHTML = "";
+  ideas.slice(0,4).forEach((items, idx)=>{
+    // Compute mini-scores
+    const tempPlate = state.plate;
+    state.plate = items.map(x => ({pid:x.p.id, zone:x.zone, portion:x.portion}));
+    const m = plateMeta();
+    state.plate = tempPlate;
+
+    const reasons = [];
+    if (items.some(x=>x.zone==="veg")) reasons.push("есть овощная база");
+    if (items.some(x=>x.zone==="protein")) reasons.push("источник белка");
+    if (items.some(x=>x.zone==="carb")) reasons.push("сложные углеводы");
+    if (items.some(x=>x.p.tags.includes("клетчатка"))) reasons.push("клетчатка");
+    const warm = items.filter(x=>x.p.thermal==="warming").length;
+    if (warm >= 2) reasons.push("ощущается теплее по ТКМ");
+    if (state.goal==="gut" && items.every(x=>x.p.gutGentle>=6)) reasons.push("мягкая для ЖКТ");
+
+    const card = document.createElement("div");
+    card.className = "idea-card";
+    card.innerHTML = `
+      <h3>Идея ${idx+1}</h3>
+      <div class="idea-items"></div>
+      <div class="idea-reasons">Почему хорошо: ${reasons.join(", ") || "вариант с тем, что есть"}.</div>
+      <div class="idea-mini-scores">
+        <span>Баланс <strong>${m.balance}%</strong></span>
+        <span>Сытость <strong>${m.satiety}%</strong></span>
+        <span>Клетчатка <strong>${m.fiber}%</strong></span>
+        <span>ЖКТ <strong>${m.gut}%</strong></span>
+        <span>Теплота ${m.warmthRaw>0.15?"согревающая":m.warmthRaw<-0.15?"охлаждающая":"нейтральная"}</span>
+      </div>
+      <div class="row" style="margin-top:10px"><button class="btn-secondary qa-btn" data-load="${idx}" style="font-size:13px;padding:8px 14px">Загрузить на тарелку</button></div>
+    `;
+    const itemsBox = card.querySelector(".idea-items");
+    items.forEach(x=>{
+      const span = document.createElement("span");
+      span.className = "chip";
+      span.innerHTML = `<span class="emoji">${emoji(x.p)}</span><span class="therm ${x.p.thermal}"></span>${x.p.name}${x._suppl?' <span class="muted small">(добавили)</span>':''}`;
+      itemsBox.appendChild(span);
+    });
+    card.querySelector("[data-load]").onclick = ()=>{
+      state.plate = items.map(x => ({pid:x.p.id, zone:x.zone, portion:x.portion}));
+      switchTab("build");
+      toast("Идея загружена на тарелку");
+      renderAll();
+    };
+    c.appendChild(card);
+  });
+}
+
+function shuffle(a){
+  for (let i=a.length-1;i>0;i--){
+    const j = Math.floor(Math.random()*(i+1));
+    [a[i],a[j]] = [a[j],a[i]];
+  }
+}
+
+/* ============ TABS ============ */
+function switchTab(tab){
+  state.activeTab = tab;
+  $$(".tab").forEach(t => t.setAttribute("aria-selected", t.dataset.tab === tab ? "true":"false"));
+  ["build","improve","ideas"].forEach(t => {
+    document.getElementById("tab-"+t).hidden = (t !== tab);
+  });
+  if (tab === "improve") renderImprove();
+  if (tab === "ideas"){ renderPantry(); renderPantryBag(); }
+  window.scrollTo({top:0, behavior:"smooth"});
+}
+
+/* ============ PROFILE BUTTON ============ */
+function updateProfileBtn(){
+  const g = GOALS.find(x=>x.id===state.goal);
+  $("#profile-emoji").textContent = g ? g.emoji : "🌿";
+  $("#profile-label").textContent = g ? g.name : "Профиль";
+}
+
+/* ============ RENDER ALL ============ */
+function renderAll(){
+  renderPlate();
+  renderLibrary();
+  renderScores();
+  renderInsights();
+  renderTcm();
+  renderImprove();
+  updateProfileBtn();
+}
+
+/* ============ INIT ============ */
+function init(){
+  // Tabs
+  $$(".tab").forEach(t => t.onclick = ()=> switchTab(t.dataset.tab));
+
+  // Library search
+  $("#lib-search").addEventListener("input", e=>{ state.search = e.target.value; renderLibrary(); });
+  $("#pantry-search").addEventListener("input", e=>{ state.pantrySearch = e.target.value; renderPantry(); });
+
+  // Quick actions
+  $$("#quick-actions [data-action]").forEach(b => b.onclick = ()=> quickAction(b.dataset.action));
+
+  // Clear
+  $("#clear-plate").onclick = ()=>{
+    if (state.plate.length === 0) return;
+    state.plate = [];
+    renderAll();
+    toast("Тарелка очищена");
+  };
+
+  // Profile
+  $("#profile-btn").onclick = ()=> openOnb(0);
+
+  // Onboarding skip
+  $("#onb-skip").onclick = closeOnb;
+
+  // Ideas
+  $("#generate-ideas").onclick = generateIdeas;
+
+  setupZoneDnd();
+  renderAll();
+
+  // Open onboarding on first load
+  setTimeout(()=> openOnb(0), 200);
+}
+
+document.addEventListener("DOMContentLoaded", init);
+</script>
+</body>
+</html>

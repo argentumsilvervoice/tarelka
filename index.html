@@ -61,54 +61,19 @@
   /* Splash screen */
   .splash{
     position:fixed;inset:0;z-index:9999;
-    background:radial-gradient(circle at 50% 45%, #fbf6ec 0%, #f5efe6 55%, #ead9b8 110%);
-    display:flex;align-items:center;justify-content:center;
+    background:#fbf6ec;
+    display:block;
     opacity:1;transition:opacity .55s ease;
     overflow:hidden;
   }
   .splash[aria-hidden="true"]{opacity:0;pointer-events:none}
-  .splash-corner{
-    position:absolute;width:42vmin;height:42vmin;max-width:280px;max-height:280px;
-    border-radius:50%;filter:blur(28px);opacity:.55;pointer-events:none;
-  }
-  .splash-corner.c1{top:-10vmin;left:-10vmin;background:radial-gradient(circle, #d4a04a 0%, transparent 65%)}
-  .splash-corner.c2{top:-8vmin;right:-12vmin;background:radial-gradient(circle, #c4623f 0%, transparent 65%)}
-  .splash-corner.c3{bottom:-10vmin;left:-12vmin;background:radial-gradient(circle, #7a8a4f 0%, transparent 65%)}
-  .splash-corner.c4{bottom:-12vmin;right:-10vmin;background:radial-gradient(circle, #8a4a5c 0%, transparent 65%)}
-  .splash-inner{
-    position:relative;z-index:1;display:flex;flex-direction:column;align-items:center;gap:18px;
-    padding:24px;text-align:center;max-width:360px;
-  }
-  .splash-mark{
-    width:128px;height:128px;color:#3b2a1c;
-    animation:splash-float 2.8s ease-in-out infinite;
-  }
-  .splash-title{
-    font-family:var(--font-display);
-    font-size:34px;line-height:1.05;letter-spacing:-0.01em;
-    color:#3b2a1c;font-weight:500;font-style:italic;
-  }
-  .splash-sub{
-    font-size:14px;color:#7a6a52;letter-spacing:.02em;
-  }
-  .splash-dots{display:inline-flex;gap:6px;margin-top:6px}
-  .splash-dots i{
-    width:7px;height:7px;border-radius:50%;background:#b89060;display:inline-block;
-    animation:splash-dot 1.2s ease-in-out infinite;
-  }
-  .splash-dots i:nth-child(2){animation-delay:.15s}
-  .splash-dots i:nth-child(3){animation-delay:.3s}
-  @keyframes splash-float{
-    0%,100%{transform:translateY(0)}
-    50%{transform:translateY(-6px)}
-  }
-  @keyframes splash-dot{
-    0%,80%,100%{transform:scale(.7);opacity:.4}
-    40%{transform:scale(1);opacity:1}
+  .splash-img{
+    position:absolute;inset:0;width:100%;height:100%;
+    object-fit:cover;object-position:center;
+    display:block;
   }
   @media(prefers-reduced-motion: reduce){
     .splash{transition:opacity .15s linear}
-    .splash-mark,.splash-dots i{animation:none}
   }
   h1,h2,h3,h4{font-family:var(--font-display);font-weight:500;letter-spacing:-0.01em;margin:0}
   h1{font-size:28px;line-height:1.15}
@@ -136,9 +101,12 @@
     padding:6px 4px 18px;
   }
   .brand{display:flex;align-items:center;gap:10px}
-  .brand-mark{width:36px;height:36px;color:var(--ink)}
-  .brand-name{font-family:var(--font-display);font-weight:500;font-size:18px;letter-spacing:-0.01em}
-  .brand-sub{font-size:11px;color:var(--ink-3);letter-spacing:0.08em;text-transform:uppercase}
+  .brand-logo{
+    display:block;height:44px;width:auto;max-width:70vw;object-fit:contain;
+  }
+  @media(min-width:760px){
+    .brand-logo{height:56px}
+  }
   .profile-btn{
     padding:8px 14px;border-radius:999px;background:var(--paper);border:1px solid var(--line);
     font-size:13px;color:var(--ink-2);display:flex;align-items:center;gap:8px;
@@ -516,32 +484,7 @@
 
 <!-- SPLASH -->
 <div class="splash" id="splash" role="status" aria-live="polite" aria-label="Загрузка приложения">
-  <span class="splash-corner c1" aria-hidden="true"></span>
-  <span class="splash-corner c2" aria-hidden="true"></span>
-  <span class="splash-corner c3" aria-hidden="true"></span>
-  <span class="splash-corner c4" aria-hidden="true"></span>
-  <div class="splash-inner">
-    <svg class="splash-mark" viewBox="0 0 120 120" fill="none" aria-hidden="true">
-      <!-- left hand -->
-      <path d="M14 78 C 14 70, 22 64, 30 66 L 44 70 C 52 72, 56 78, 56 84 L 56 90 C 56 96, 52 100, 46 100 L 26 100 C 18 100, 14 94, 14 86 Z"
-            stroke="#3b2a1c" stroke-width="2.2" stroke-linejoin="round" fill="#fbf6ec"/>
-      <!-- right hand -->
-      <path d="M106 78 C 106 70, 98 64, 90 66 L 76 70 C 68 72, 64 78, 64 84 L 64 90 C 64 96, 68 100, 74 100 L 94 100 C 102 100, 106 94, 106 86 Z"
-            stroke="#3b2a1c" stroke-width="2.2" stroke-linejoin="round" fill="#fbf6ec"/>
-      <!-- plate ellipse top -->
-      <ellipse cx="60" cy="62" rx="44" ry="10" stroke="#3b2a1c" stroke-width="2.2" fill="#fbf6ec"/>
-      <!-- plate bowl -->
-      <path d="M16 62 C 20 78, 38 86, 60 86 C 82 86, 100 78, 104 62"
-            stroke="#3b2a1c" stroke-width="2.2" fill="#f0e3c8"/>
-      <!-- steam wisps -->
-      <path d="M44 38 C 40 32, 48 28, 44 22" stroke="#b89060" stroke-width="2" stroke-linecap="round" fill="none"/>
-      <path d="M60 34 C 56 28, 64 24, 60 18" stroke="#b89060" stroke-width="2" stroke-linecap="round" fill="none"/>
-      <path d="M76 38 C 72 32, 80 28, 76 22" stroke="#b89060" stroke-width="2" stroke-linecap="round" fill="none"/>
-    </svg>
-    <div class="splash-title">тёплые тарелки</div>
-    <div class="splash-sub">собираем вашу тарелку…</div>
-    <span class="splash-dots" aria-hidden="true"><i></i><i></i><i></i></span>
-  </div>
+  <img class="splash-img" src="https://s3.twcstorage.ru/52aecabe-lekarway/warmplates/warmplates_screen.png" alt="Тёплые тарелки — экран загрузки" />
 </div>
 
 <div class="app">
@@ -549,17 +492,7 @@
   <!-- HEADER -->
   <header class="topbar">
     <div class="brand">
-      <svg class="brand-mark" viewBox="0 0 40 40" fill="none" aria-label="Логотип Гарвардская тарелка">
-        <circle cx="20" cy="20" r="18" fill="#ead9b8" stroke="#36322a" stroke-width="1.4"/>
-        <path d="M2 22a18 18 0 0036 0H2z" fill="#7a8a4f"/>
-        <path d="M20 4v18" stroke="#36322a" stroke-width="1.2" stroke-linecap="round"/>
-        <path d="M20 22h17.5" stroke="#36322a" stroke-width="1.2" stroke-linecap="round"/>
-        <circle cx="29" cy="12" r="2.6" fill="#c4623f"/>
-      </svg>
-      <div>
-        <div class="brand-name">Гарвардская тарелка</div>
-        <div class="brand-sub">Wellness · Nutrition · ТКМ</div>
-      </div>
+      <img class="brand-logo" src="https://s3.twcstorage.ru/52aecabe-lekarway/warmplates/warmplates_logo.png" alt="Тёплые тарелки" />
     </div>
     <button class="profile-btn" id="profile-btn" aria-label="Настройки профиля">
       <span id="profile-emoji">🌿</span>

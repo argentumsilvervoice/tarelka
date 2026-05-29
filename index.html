@@ -57,6 +57,59 @@
     min-height:100vh;
     overflow-x:hidden;
   }
+
+  /* Splash screen */
+  .splash{
+    position:fixed;inset:0;z-index:9999;
+    background:radial-gradient(circle at 50% 45%, #fbf6ec 0%, #f5efe6 55%, #ead9b8 110%);
+    display:flex;align-items:center;justify-content:center;
+    opacity:1;transition:opacity .55s ease;
+    overflow:hidden;
+  }
+  .splash[aria-hidden="true"]{opacity:0;pointer-events:none}
+  .splash-corner{
+    position:absolute;width:42vmin;height:42vmin;max-width:280px;max-height:280px;
+    border-radius:50%;filter:blur(28px);opacity:.55;pointer-events:none;
+  }
+  .splash-corner.c1{top:-10vmin;left:-10vmin;background:radial-gradient(circle, #d4a04a 0%, transparent 65%)}
+  .splash-corner.c2{top:-8vmin;right:-12vmin;background:radial-gradient(circle, #c4623f 0%, transparent 65%)}
+  .splash-corner.c3{bottom:-10vmin;left:-12vmin;background:radial-gradient(circle, #7a8a4f 0%, transparent 65%)}
+  .splash-corner.c4{bottom:-12vmin;right:-10vmin;background:radial-gradient(circle, #8a4a5c 0%, transparent 65%)}
+  .splash-inner{
+    position:relative;z-index:1;display:flex;flex-direction:column;align-items:center;gap:18px;
+    padding:24px;text-align:center;max-width:360px;
+  }
+  .splash-mark{
+    width:128px;height:128px;color:#3b2a1c;
+    animation:splash-float 2.8s ease-in-out infinite;
+  }
+  .splash-title{
+    font-family:var(--font-display);
+    font-size:34px;line-height:1.05;letter-spacing:-0.01em;
+    color:#3b2a1c;font-weight:500;font-style:italic;
+  }
+  .splash-sub{
+    font-size:14px;color:#7a6a52;letter-spacing:.02em;
+  }
+  .splash-dots{display:inline-flex;gap:6px;margin-top:6px}
+  .splash-dots i{
+    width:7px;height:7px;border-radius:50%;background:#b89060;display:inline-block;
+    animation:splash-dot 1.2s ease-in-out infinite;
+  }
+  .splash-dots i:nth-child(2){animation-delay:.15s}
+  .splash-dots i:nth-child(3){animation-delay:.3s}
+  @keyframes splash-float{
+    0%,100%{transform:translateY(0)}
+    50%{transform:translateY(-6px)}
+  }
+  @keyframes splash-dot{
+    0%,80%,100%{transform:scale(.7);opacity:.4}
+    40%{transform:scale(1);opacity:1}
+  }
+  @media(prefers-reduced-motion: reduce){
+    .splash{transition:opacity .15s linear}
+    .splash-mark,.splash-dots i{animation:none}
+  }
   h1,h2,h3,h4{font-family:var(--font-display);font-weight:500;letter-spacing:-0.01em;margin:0}
   h1{font-size:28px;line-height:1.15}
   h2{font-size:22px;line-height:1.2}
@@ -149,15 +202,15 @@
     gap:6px;padding:34px 16px 16px;
     transition:background .25s ease;
   }
-  .zone-veg{padding:34px 14px 16px 24px;justify-content:center;align-content:center}
+  .zone-veg{padding:34px 14px 38% 24px;justify-content:center;align-content:center}
   .zone-protein{padding:46px 30px 14px 14px}
-  .zone-carb{padding:14px 50% 36px 18px;align-content:flex-start;justify-content:flex-start}
+  .zone-carb{padding:14px 18px 36px 18px;align-content:flex-start;justify-content:center}
   .zone-extras{padding:14px}
   .zone-veg{top:0;left:0;width:50%;height:100%;border-top-left-radius:50%;border-bottom-left-radius:50%}
   .zone-protein{top:0;left:50%;width:50%;height:50%;border-top-right-radius:50%}
   .zone-carb{top:50%;left:50%;width:50%;height:50%;border-bottom-right-radius:50%}
   .zone-extras{
-    position:absolute;right:-4px;bottom:-4px;width:34%;height:34%;border-radius:50%;
+    position:absolute;left:-4px;bottom:-4px;width:34%;height:34%;border-radius:50%;
     background:radial-gradient(circle at 35% 30%, #fff 0%, var(--paper) 60%, var(--cream) 100%);
     border:1px solid var(--line-2);
     box-shadow:0 2px 6px rgba(54,50,42,.06), 0 18px 36px -10px rgba(54,50,42,.22), inset 0 0 0 8px rgba(255,255,255,.4), inset 0 0 0 9px var(--line);
@@ -173,16 +226,16 @@
   }
   .lbl-veg{top:14px;left:24%;transform:translateX(-50%);z-index:4}
   .lbl-protein{top:14px;left:72%;transform:translateX(-50%);z-index:4}
-  .lbl-carb{bottom:18px;left:30%;transform:translateX(-50%);z-index:4}
+  .lbl-carb{bottom:18px;left:75%;transform:translateX(-50%);z-index:4}
   @media(max-width:500px){
     .zone-label{font-size:9px;padding:2px 6px}
-    .lbl-veg{left:18%}
+    .lbl-veg{left:30%;top:12px}
     .lbl-protein{left:74%}
-    .lbl-carb{left:28%;bottom:14px}
+    .lbl-carb{left:74%;bottom:14px}
     .lbl-extras{font-size:8px}
   }
   .lbl-extras{
-    position:absolute;bottom:8px;right:8px;z-index:3;font-size:9px;
+    position:absolute;bottom:8px;left:8px;z-index:3;font-size:9px;
     color:var(--ink-3);background:rgba(251,246,236,.85);padding:2px 6px;border-radius:999px;
   }
 
@@ -460,6 +513,37 @@
 </style>
 </head>
 <body>
+
+<!-- SPLASH -->
+<div class="splash" id="splash" role="status" aria-live="polite" aria-label="Загрузка приложения">
+  <span class="splash-corner c1" aria-hidden="true"></span>
+  <span class="splash-corner c2" aria-hidden="true"></span>
+  <span class="splash-corner c3" aria-hidden="true"></span>
+  <span class="splash-corner c4" aria-hidden="true"></span>
+  <div class="splash-inner">
+    <svg class="splash-mark" viewBox="0 0 120 120" fill="none" aria-hidden="true">
+      <!-- left hand -->
+      <path d="M14 78 C 14 70, 22 64, 30 66 L 44 70 C 52 72, 56 78, 56 84 L 56 90 C 56 96, 52 100, 46 100 L 26 100 C 18 100, 14 94, 14 86 Z"
+            stroke="#3b2a1c" stroke-width="2.2" stroke-linejoin="round" fill="#fbf6ec"/>
+      <!-- right hand -->
+      <path d="M106 78 C 106 70, 98 64, 90 66 L 76 70 C 68 72, 64 78, 64 84 L 64 90 C 64 96, 68 100, 74 100 L 94 100 C 102 100, 106 94, 106 86 Z"
+            stroke="#3b2a1c" stroke-width="2.2" stroke-linejoin="round" fill="#fbf6ec"/>
+      <!-- plate ellipse top -->
+      <ellipse cx="60" cy="62" rx="44" ry="10" stroke="#3b2a1c" stroke-width="2.2" fill="#fbf6ec"/>
+      <!-- plate bowl -->
+      <path d="M16 62 C 20 78, 38 86, 60 86 C 82 86, 100 78, 104 62"
+            stroke="#3b2a1c" stroke-width="2.2" fill="#f0e3c8"/>
+      <!-- steam wisps -->
+      <path d="M44 38 C 40 32, 48 28, 44 22" stroke="#b89060" stroke-width="2" stroke-linecap="round" fill="none"/>
+      <path d="M60 34 C 56 28, 64 24, 60 18" stroke="#b89060" stroke-width="2" stroke-linecap="round" fill="none"/>
+      <path d="M76 38 C 72 32, 80 28, 76 22" stroke="#b89060" stroke-width="2" stroke-linecap="round" fill="none"/>
+    </svg>
+    <div class="splash-title">тёплые тарелки</div>
+    <div class="splash-sub">собираем вашу тарелку…</div>
+    <span class="splash-dots" aria-hidden="true"><i></i><i></i><i></i></span>
+  </div>
+</div>
+
 <div class="app">
 
   <!-- HEADER -->
@@ -1815,8 +1899,19 @@ function init(){
   setupZoneDnd();
   renderAll();
 
-  // Open onboarding on first load
-  setTimeout(()=> openOnb(0), 200);
+  // Splash fade-out
+  const splash = document.getElementById("splash");
+  if (splash){
+    const reduce = window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    const holdMs = reduce ? 300 : 1500;
+    setTimeout(()=>{
+      splash.setAttribute("aria-hidden","true");
+      setTimeout(()=>{ if (splash.parentNode) splash.parentNode.removeChild(splash); }, reduce ? 200 : 650);
+    }, holdMs);
+  }
+
+  // Open onboarding on first load (after splash)
+  setTimeout(()=> openOnb(0), 2000);
 }
 
 document.addEventListener("DOMContentLoaded", init);

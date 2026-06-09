@@ -1,0 +1,866 @@
+<!doctype html>
+<html lang="ru">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover" />
+<title>НутриАссистент — семейный конструктор здорового питания</title>
+<meta name="description" content="НутриАссистент — семейный конструктор здорового питания. Понимает, что уже есть дома, учитывает предпочтения каждого члена семьи и собирает план питания и список покупок. Без подсчёта калорий." />
+<meta name="theme-color" content="#f5efe6" />
+<meta property="og:type" content="website" />
+<meta property="og:title" content="НутриАссистент — семейный конструктор здорового питания" />
+<meta property="og:description" content="Соберите план питания из того, что уже дома, с учётом предпочтений всей семьи. Тёплый, простой и без счётчика калорий." />
+<meta property="og:locale" content="ru_RU" />
+<meta name="twitter:card" content="summary" />
+<meta name="twitter:title" content="НутриАссистент — семейный конструктор здорового питания" />
+<meta name="twitter:description" content="Семейный конструктор здорового питания: из того, что есть дома, с учётом вкусов каждого." />
+<link rel="icon" type="image/x-icon" href="favicon.ico" />
+<link rel="icon" type="image/png" sizes="16x16" href="favicon-16x16.png" />
+<link rel="icon" type="image/png" sizes="32x32" href="favicon-32x32.png" />
+<link rel="apple-touch-icon" sizes="180x180" href="apple-touch-icon.png" />
+<link rel="manifest" href="site.webmanifest" />
+<meta name="apple-mobile-web-app-title" content="НутриАссистент" />
+<meta name="application-name" content="НутриАссистент" />
+<meta name="apple-mobile-web-app-capable" content="yes" />
+<meta name="apple-mobile-web-app-status-bar-style" content="default" />
+<style>
+  @import url('https://api.fontshare.com/v2/css?f[]=general-sans@400,500,600&f[]=fraunces@400,500,600&display=swap');
+
+  :root{
+    --bg:#f5efe6;
+    --bg-2:#efe6d6;
+    --paper:#fbf6ec;
+    --ink:#36322a;
+    --ink-2:#5b554a;
+    --ink-3:#8a8377;
+    --line:#e3d8c2;
+    --line-2:#d4c6a8;
+    --accent:#7a8a4f;       /* warm olive */
+    --accent-2:#5e6f3a;
+    --terra:#c4623f;        /* terracotta */
+    --terra-2:#a14a2a;
+    --honey:#d4a04a;
+    --cream:#f0e3c8;
+    --berry:#8a4a5c;
+    --cool:#5d8a96;
+    --ok:#6b8e3a;
+    --soft:#e8d8b8;
+    --shadow:0 1px 2px rgba(54,50,42,.06), 0 8px 28px rgba(54,50,42,.08);
+    --shadow-lg:0 4px 16px rgba(54,50,42,.08), 0 24px 60px rgba(54,50,42,.12);
+    --radius:18px;
+    --radius-sm:12px;
+    --radius-lg:24px;
+    --font-display:'Fraunces', Georgia, 'Times New Roman', serif;
+    --font-body:'General Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  }
+
+  *{box-sizing:border-box}
+  html,body{margin:0;padding:0}
+  body{
+    font-family:var(--font-body);
+    background:var(--bg);
+    color:var(--ink);
+    -webkit-font-smoothing:antialiased;
+    -moz-osx-font-smoothing:grayscale;
+    font-size:16px;line-height:1.5;
+    min-height:100vh;overflow-x:hidden;
+  }
+  h1,h2,h3,h4{font-family:var(--font-display);font-weight:500;letter-spacing:-0.01em;margin:0}
+  h1{font-size:26px;line-height:1.15}
+  h2{font-size:21px;line-height:1.2}
+  h3{font-size:17px;line-height:1.25}
+  p{margin:0}
+  button{font-family:inherit;cursor:pointer;border:none;background:none;color:inherit;font-size:inherit}
+  button:focus-visible{outline:2px solid var(--accent);outline-offset:2px;border-radius:8px}
+
+  /* Splash */
+  .splash{
+    position:fixed;inset:0;z-index:9999;background:#fbf6ec;
+    display:flex;align-items:center;justify-content:center;
+    opacity:1;transition:opacity .55s ease;overflow:hidden;
+  }
+  .splash[aria-hidden="true"]{opacity:0;pointer-events:none}
+  .splash-inner{text-align:center;padding:24px;max-width:420px}
+  .splash-badge{
+    width:88px;height:88px;border-radius:50%;margin:0 auto 22px;
+    background:radial-gradient(circle at 35% 30%, #fff 0%, var(--paper) 55%, var(--cream) 100%);
+    border:1px solid var(--line-2);
+    box-shadow:0 2px 6px rgba(54,50,42,.06), 0 24px 50px -18px rgba(54,50,42,.28), inset 0 0 0 7px rgba(255,255,255,.5), inset 0 0 0 8px var(--line);
+    display:flex;align-items:center;justify-content:center;color:var(--accent-2);
+  }
+  .splash-inner h1{font-size:32px;color:var(--ink);margin-bottom:8px}
+  .splash-inner p{color:var(--ink-2);font-size:15px}
+  @media(prefers-reduced-motion: reduce){.splash{transition:opacity .15s linear}}
+
+  /* Layout */
+  .app{max-width:760px;margin:0 auto;padding:14px 16px 110px}
+  @media(min-width:760px){.app{padding:22px 28px 110px};h1{font-size:30px};h2{font-size:24px}}
+
+  /* Header */
+  .topbar{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:4px 2px 16px}
+  .brand{display:flex;align-items:center;gap:11px;min-width:0}
+  .brand-icon{
+    flex:0 0 auto;width:46px;height:46px;border-radius:50%;
+    background:radial-gradient(circle at 35% 30%, #fff 0%, var(--paper) 55%, var(--cream) 100%);
+    border:1px solid var(--line-2);
+    box-shadow:0 1px 3px rgba(54,50,42,.08), inset 0 0 0 4px rgba(255,255,255,.5), inset 0 0 0 5px var(--line);
+    display:flex;align-items:center;justify-content:center;color:var(--accent-2);
+  }
+  .brand-text{min-width:0}
+  .brand-name{font-family:var(--font-display);font-weight:600;font-size:20px;color:var(--ink);line-height:1.05;letter-spacing:-.01em}
+  .brand-tag{font-size:11.5px;color:var(--ink-3);line-height:1.2;margin-top:1px}
+  @media(min-width:760px){.brand-name{font-size:23px};.brand-tag{font-size:13px}}
+  .topbar-actions{display:flex;align-items:center;gap:8px;flex:0 0 auto}
+  .pill-btn{
+    padding:8px 13px;border-radius:999px;background:var(--paper);border:1px solid var(--line);
+    font-size:12.5px;color:var(--ink-2);display:inline-flex;align-items:center;gap:7px;white-space:nowrap;
+  }
+  .pill-btn:hover{background:var(--bg-2)}
+  .pill-btn.accent{background:var(--ink);color:var(--paper);border-color:var(--ink)}
+
+  /* Cards */
+  .card{background:var(--paper);border:1px solid var(--line);border-radius:var(--radius);padding:18px;box-shadow:var(--shadow)}
+  .card + .card{margin-top:16px}
+  .card-soft{background:var(--bg-2);border-color:transparent;box-shadow:none}
+  .card-title{display:flex;justify-content:space-between;align-items:center;gap:12px;margin-bottom:12px}
+  .card-title h2{margin:0}
+  .muted{color:var(--ink-3);font-size:13px}
+  .small{font-size:12px}
+  .section-intro{margin:2px 2px 16px}
+  .section-intro h2{margin-bottom:6px}
+  .section-intro p{color:var(--ink-2);font-size:14px}
+
+  /* Bottom tabbar */
+  .tabbar{
+    position:fixed;left:0;right:0;bottom:0;z-index:60;
+    background:rgba(251,246,236,.92);backdrop-filter:blur(10px);
+    border-top:1px solid var(--line);
+    padding:7px 10px calc(7px + env(safe-area-inset-bottom));
+    display:flex;gap:4px;
+  }
+  .tabbar-inner{max-width:760px;margin:0 auto;width:100%;display:flex;gap:4px}
+  .tabbtn{
+    flex:1 1 0;display:flex;flex-direction:column;align-items:center;gap:3px;
+    padding:6px 4px;border-radius:14px;color:var(--ink-3);font-size:11px;font-weight:500;transition:all .18s ease;
+  }
+  .tabbtn svg{width:22px;height:22px}
+  .tabbtn[aria-selected="true"]{color:var(--accent-2);background:var(--bg-2)}
+  .tabbtn:not([aria-selected="true"]):active{background:var(--bg-2)}
+
+  .panel{display:none;animation:fade .25s ease}
+  .panel.active{display:block}
+  @keyframes fade{from{opacity:0;transform:translateY(4px)}to{opacity:1;transform:none}}
+
+  /* Mode chips */
+  .modes{display:grid;grid-template-columns:repeat(2,1fr);gap:8px;margin-bottom:16px}
+  @media(min-width:520px){.modes{grid-template-columns:repeat(4,1fr)}}
+  .mode{
+    display:flex;flex-direction:column;align-items:center;gap:6px;text-align:center;
+    padding:13px 8px;border-radius:var(--radius-sm);background:var(--paper);
+    border:1px solid var(--line);color:var(--ink-2);font-size:12.5px;font-weight:500;transition:all .15s ease;
+  }
+  .mode svg{width:22px;height:22px;color:var(--accent-2)}
+  .mode:hover{border-color:var(--accent);background:#fcf8f0}
+  .mode .tagsoon{font-size:9px;letter-spacing:.05em;text-transform:uppercase;color:var(--honey);font-weight:600}
+
+  /* Inventory groups */
+  .inv-group{margin-bottom:14px}
+  .inv-head{display:flex;align-items:center;gap:8px;margin-bottom:9px}
+  .inv-head h3{font-size:15px}
+  .inv-head .count{font-size:12px;color:var(--ink-3)}
+  .inv-icon{width:18px;height:18px;color:var(--accent-2)}
+  .chips{display:flex;flex-wrap:wrap;gap:7px}
+  .chip{
+    display:inline-flex;align-items:center;gap:6px;padding:7px 11px 7px 10px;border-radius:999px;
+    background:var(--paper);border:1px solid var(--line);font-size:13px;color:var(--ink);
+    font-family:inherit;transition:all .15s ease;cursor:pointer;
+  }
+  .chip:hover{border-color:var(--accent);background:#fcf8f0}
+  .chip .emoji{font-size:14px;line-height:1}
+  .chip.off{opacity:.42;text-decoration:line-through}
+  .chip.soon{background:#f7e6cf;border-color:#e8c98a}
+  .chip .soon-dot{width:7px;height:7px;border-radius:50%;background:var(--honey)}
+  .chip-add{border-style:dashed;color:var(--accent-2);border-color:var(--line-2)}
+  .chip-add .plus{font-weight:700}
+
+  /* Segmented */
+  .seg{display:inline-flex;background:var(--bg-2);border-radius:999px;padding:4px;gap:4px;margin-bottom:16px}
+  .seg button{padding:8px 16px;border-radius:999px;font-size:13px;font-weight:500;color:var(--ink-2)}
+  .seg button[aria-selected="true"]{background:var(--ink);color:var(--paper)}
+
+  /* Meal cards */
+  .meal{
+    background:var(--paper);border:1px solid var(--line);border-radius:var(--radius);
+    padding:16px;box-shadow:var(--shadow);transition:border-color .18s ease, box-shadow .18s ease;cursor:pointer;
+  }
+  .meal + .meal{margin-top:12px}
+  .meal.sel{border-color:var(--accent);box-shadow:0 0 0 2px rgba(122,138,79,.25), var(--shadow)}
+  .meal-top{display:flex;justify-content:space-between;align-items:flex-start;gap:12px}
+  .meal-emoji{font-size:30px;line-height:1;flex:0 0 auto}
+  .meal-h{flex:1 1 auto;min-width:0}
+  .meal-h h3{margin-bottom:3px}
+  .meal-mealtype{font-size:11px;letter-spacing:.06em;text-transform:uppercase;color:var(--ink-3);font-weight:600}
+  .meal-pick{
+    flex:0 0 auto;width:26px;height:26px;border-radius:50%;border:1.5px solid var(--line-2);
+    display:flex;align-items:center;justify-content:center;color:transparent;transition:all .18s ease;
+  }
+  .meal.sel .meal-pick{background:var(--accent);border-color:var(--accent);color:#fff}
+  .meal-facts{display:flex;flex-wrap:wrap;gap:7px;margin-top:12px}
+  .fact{display:inline-flex;align-items:center;gap:6px;font-size:12px;color:var(--ink-2);background:var(--bg-2);padding:5px 10px;border-radius:999px}
+  .fact svg{width:14px;height:14px;color:var(--accent-2)}
+  .meal-lines{margin-top:13px;display:flex;flex-direction:column;gap:8px}
+  .mline{font-size:13px;color:var(--ink-2);display:flex;gap:8px;align-items:flex-start}
+  .mline b{color:var(--ink);font-weight:600}
+  .dot{flex:0 0 auto;width:7px;height:7px;border-radius:50%;margin-top:6px}
+  .dot.home{background:var(--accent)}
+  .dot.buy{background:var(--terra)}
+  .dot.fam{background:var(--cool)}
+  .meal-detail{margin-top:14px;padding-top:14px;border-top:1px dashed var(--line-2);display:none}
+  .meal.sel .meal-detail{display:block}
+
+  /* Balanced plate (inside meal detail) */
+  .plate-block{display:flex;gap:18px;align-items:center;flex-wrap:wrap}
+  .plate-wrap{position:relative;width:172px;height:172px;flex:0 0 auto;margin:4px auto}
+  .plate{
+    position:absolute;inset:0;border-radius:50%;
+    background:radial-gradient(circle at 35% 30%, #fff 0%, var(--paper) 50%, #f3e9d4 100%);
+    border:1px solid var(--line-2);
+    box-shadow:0 2px 6px rgba(54,50,42,.06), 0 20px 40px -16px rgba(54,50,42,.22), inset 0 0 0 8px rgba(255,255,255,.4), inset 0 0 0 9px var(--line);
+    overflow:hidden;
+  }
+  .plate-svg{position:absolute;inset:0;width:100%;height:100%}
+  .plate-legend{flex:1 1 150px;min-width:140px;display:flex;flex-direction:column;gap:9px}
+  .leg{display:flex;align-items:center;gap:9px;font-size:13px;color:var(--ink-2)}
+  .leg .sw{width:13px;height:13px;border-radius:4px;flex:0 0 auto}
+  .leg b{color:var(--ink);font-weight:600}
+  .sw.veg{background:#9bb564}.sw.protein{background:#cf8a5f}.sw.carb{background:#e0b25c}
+  .plate-note{font-size:12px;color:var(--ink-3);margin-top:6px}
+
+  /* Family */
+  .fam-grid{display:grid;grid-template-columns:1fr;gap:14px}
+  @media(min-width:560px){.fam-grid{grid-template-columns:1fr 1fr}}
+  .fam{background:var(--paper);border:1px solid var(--line);border-radius:var(--radius);padding:16px;box-shadow:var(--shadow)}
+  .fam-top{display:flex;align-items:center;gap:11px;margin-bottom:12px}
+  .fam-ava{width:42px;height:42px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:21px;flex:0 0 auto;background:var(--cream);border:1px solid var(--line-2)}
+  .fam-name{font-family:var(--font-display);font-weight:600;font-size:17px}
+  .fam-role{font-size:12px;color:var(--ink-3)}
+  .tagrow{margin-top:9px}
+  .tagrow .lbl{font-size:11px;letter-spacing:.05em;text-transform:uppercase;color:var(--ink-3);font-weight:600;margin-bottom:5px;display:flex;align-items:center;gap:6px}
+  .tagrow .lbl .d{width:7px;height:7px;border-radius:50%}
+  .d.like{background:var(--accent)}.d.no{background:var(--honey)}.d.cant{background:var(--terra)}.d.goal{background:var(--cool)}
+  .ftags{display:flex;flex-wrap:wrap;gap:6px}
+  .ftag{display:inline-flex;align-items:center;gap:5px;padding:5px 10px;border-radius:999px;font-size:12.5px;border:1px solid var(--line);background:var(--paper);color:var(--ink);transition:all .15s}
+  .ftag:hover{border-color:var(--accent)}
+  .ftag.like{background:#eef2e0;border-color:#d3ddb4}
+  .ftag.no{background:#f8ecd6;border-color:#e9cf9a}
+  .ftag.cant{background:#f6ddd2;border-color:#e7b39d}
+  .ftag.goal{background:#dde9ec;border-color:#b3d0d6}
+  .ftag .x{opacity:.5;font-weight:600}
+  .ftag-add{border-style:dashed;color:var(--accent-2);border-color:var(--line-2)}
+
+  /* Shopping */
+  .shop-group{margin-bottom:6px}
+  .shop-head{display:flex;align-items:center;gap:8px;margin:14px 0 8px}
+  .shop-head h3{font-size:15px}
+  .shop-head .si{width:17px;height:17px;color:var(--accent-2)}
+  .shop-list{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:2px}
+  .shop-item{
+    display:flex;align-items:center;gap:11px;padding:9px 4px;border-radius:10px;font-size:14px;color:var(--ink);cursor:pointer;
+  }
+  .shop-item:hover{background:var(--bg-2)}
+  .shop-box{width:20px;height:20px;border-radius:6px;border:1.5px solid var(--line-2);flex:0 0 auto;display:flex;align-items:center;justify-content:center;color:transparent;transition:all .15s}
+  .shop-item.done .shop-box{background:var(--accent);border-color:var(--accent);color:#fff}
+  .shop-item.done .shop-name{text-decoration:line-through;color:var(--ink-3)}
+  .shop-name{flex:1 1 auto}
+  .shop-qty{font-size:12px;color:var(--ink-3)}
+  .shop-empty{color:var(--ink-3);font-size:13.5px;padding:8px 2px}
+
+  /* Reminders */
+  .rem{display:flex;gap:11px;align-items:flex-start;padding:11px;border-radius:var(--radius-sm);background:var(--bg-2);font-size:13.5px;color:var(--ink-2)}
+  .rem + .rem{margin-top:8px}
+  .rem-ic{flex:0 0 auto;width:30px;height:30px;border-radius:9px;background:var(--paper);border:1px solid var(--line);display:flex;align-items:center;justify-content:center;font-size:15px}
+  .rem b{color:var(--ink);font-weight:600}
+
+  /* Premium */
+  .premium{
+    background:linear-gradient(135deg, #2f2b24 0%, #423a2c 60%, #4c4030 100%);
+    color:#f3ead7;border-radius:var(--radius-lg);padding:22px 20px;box-shadow:var(--shadow-lg);position:relative;overflow:hidden;
+  }
+  .premium::after{content:"";position:absolute;right:-40px;top:-40px;width:160px;height:160px;border-radius:50%;background:radial-gradient(circle,rgba(212,160,74,.35),transparent 70%)}
+  .premium-badge{display:inline-flex;align-items:center;gap:7px;font-size:11px;letter-spacing:.1em;text-transform:uppercase;font-weight:600;color:var(--honey);margin-bottom:9px}
+  .premium h2{color:#fff;margin-bottom:6px;font-size:22px}
+  .premium > p{color:#d8cdb6;font-size:13.5px;margin-bottom:16px;position:relative}
+  .feat{display:flex;gap:12px;align-items:flex-start;padding:12px 0;border-top:1px solid rgba(243,234,215,.12);position:relative}
+  .feat:first-of-type{border-top:none}
+  .feat-ic{flex:0 0 auto;width:34px;height:34px;border-radius:10px;background:rgba(243,234,215,.08);display:flex;align-items:center;justify-content:center;font-size:17px}
+  .feat-b{flex:1 1 auto;min-width:0}
+  .feat-b h4{font-family:var(--font-body);font-weight:600;font-size:14px;color:#fff;display:flex;align-items:center;gap:8px}
+  .feat-b p{font-size:12.5px;color:#c8bda6;margin-top:2px;line-height:1.45}
+  .lock{flex:0 0 auto;color:var(--honey);width:16px;height:16px}
+  .premium-cta{margin-top:18px;width:100%;padding:13px;border-radius:14px;background:var(--honey);color:#3a2f18;font-weight:600;font-size:14.5px;position:relative}
+  .premium-cta:hover{background:#dcab57}
+  .premium-foot{text-align:center;font-size:11.5px;color:#b6ab94;margin-top:10px;position:relative}
+
+  /* Toast */
+  .toast{
+    position:fixed;left:50%;bottom:90px;transform:translateX(-50%) translateY(20px);
+    background:var(--ink);color:var(--paper);padding:11px 18px;border-radius:999px;font-size:13.5px;
+    box-shadow:var(--shadow-lg);opacity:0;pointer-events:none;transition:all .3s ease;z-index:200;max-width:90vw;text-align:center;
+  }
+  .toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
+
+  .divider{height:1px;background:var(--line);margin:18px 0}
+</style>
+</head>
+<body>
+
+<div class="splash" id="splash" role="status" aria-live="polite" aria-label="Загрузка НутриАссистент">
+  <div class="splash-inner">
+    <div class="splash-badge" aria-hidden="true">
+      <svg width="46" height="46" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12a7 7 0 0 1 14 0"/><path d="M3 12h18"/><path d="M7 12c0-2 1.5-3 2.5-2.2"/><path d="M14 9.8C15 9 16.5 10 16.5 12"/><path d="M8 17l-1.5 3"/><path d="M16 17l1.5 3"/></svg>
+    </div>
+    <h1>НутриАссистент</h1>
+    <p>Семейный конструктор здорового питания</p>
+  </div>
+</div>
+
+<div class="app" id="app">
+  <header class="topbar">
+    <div class="brand">
+      <div class="brand-icon" aria-hidden="true">
+        <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12a7 7 0 0 1 14 0"/><path d="M3 12h18"/><path d="M7.5 12c0-2 1.6-3 2.6-2"/><path d="M13.9 10C15 9.2 16.5 10.2 16.5 12"/></svg>
+      </div>
+      <div class="brand-text">
+        <div class="brand-name">НутриАссистент</div>
+        <div class="brand-tag">Семейный конструктор здорового питания</div>
+      </div>
+    </div>
+    <div class="topbar-actions">
+      <button class="pill-btn" id="demoBtn" type="button" aria-label="Демо-семья">Демо&nbsp;·&nbsp;Семья из 4</button>
+    </div>
+  </header>
+
+  <!-- ДОМА -->
+  <section class="panel active" id="panel-home" role="tabpanel" aria-label="Дома">
+    <div class="section-intro">
+      <h2>Что у нас дома</h2>
+      <p>Сначала разберёмся, что уже есть — потом соберём из этого еду. Добавляйте продукты как удобно.</p>
+    </div>
+
+    <div class="modes" id="modes">
+      <button class="mode" data-mode="manual" type="button">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20h9"/><path d="M16.5 3.5a2.1 2.1 0 0 1 3 3L7 19l-4 1 1-4Z"/></svg>
+        Вручную
+      </button>
+      <button class="mode" data-mode="photo" type="button">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M3 8a2 2 0 0 1 2-2h2l1.5-2h7L19 6h0a2 2 0 0 1 2 2v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2Z"/><circle cx="12" cy="12.5" r="3.2"/></svg>
+        Фото холодильника
+        <span class="tagsoon">скоро</span>
+      </button>
+      <button class="mode" data-mode="receipt" type="button">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M6 2h12v20l-2-1.5L14 22l-2-1.5L10 22l-2-1.5L6 22Z"/><path d="M9 7h6"/><path d="M9 11h6"/><path d="M9 15h4"/></svg>
+        Чек
+        <span class="tagsoon">скоро</span>
+      </button>
+      <button class="mode" data-mode="voice" type="button">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="3" width="6" height="11" rx="3"/><path d="M5 11a7 7 0 0 0 14 0"/><path d="M12 18v3"/></svg>
+        Голосом
+        <span class="tagsoon">скоро</span>
+      </button>
+    </div>
+
+    <div class="card">
+      <div class="card-title"><h2>Инвентарь дома</h2><span class="muted" id="invSummary"></span></div>
+      <div id="inventory"></div>
+    </div>
+  </section>
+
+  <!-- ПЛАН -->
+  <section class="panel" id="panel-plan" role="tabpanel" aria-label="План">
+    <div class="section-intro">
+      <h2>План питания</h2>
+      <p>Несколько вариантов из того, что уже есть дома — с учётом вкусов семьи. Выберите, что готовим.</p>
+    </div>
+
+    <div class="seg" id="planSeg" role="tablist" aria-label="Период">
+      <button data-period="today" aria-selected="true" type="button">Сегодня</button>
+      <button data-period="tomorrow" aria-selected="false" type="button">Завтра</button>
+      <button data-period="week" aria-selected="false" type="button">Неделя</button>
+    </div>
+
+    <div id="planNote" class="muted" style="margin:-6px 2px 14px"></div>
+    <div id="meals"></div>
+  </section>
+
+  <!-- СЕМЬЯ -->
+  <section class="panel" id="panel-family" role="tabpanel" aria-label="Семья">
+    <div class="section-intro">
+      <h2>Наша семья</h2>
+      <p>Что любит, что не ест и что нельзя каждому. План и список покупок подстраиваются автоматически.</p>
+    </div>
+    <div class="fam-grid" id="family"></div>
+  </section>
+
+  <!-- ПОКУПКИ -->
+  <section class="panel" id="panel-shop" role="tabpanel" aria-label="Покупки">
+    <div class="section-intro">
+      <h2>Список покупок</h2>
+      <p>Собран из выбранного плана — без того, что уже есть дома. Сгруппирован по отделам.</p>
+    </div>
+
+    <div class="card">
+      <div class="card-title"><h2>Купить</h2><span class="muted" id="shopSummary"></span></div>
+      <div id="shop"></div>
+    </div>
+
+    <div class="card">
+      <div class="card-title"><h2>Напоминания и подготовка</h2></div>
+      <div id="reminders"></div>
+    </div>
+  </section>
+
+  <!-- PREMIUM (shown on all-but-shop intros; placed once, after panels) -->
+  <div style="margin-top:18px">
+    <div class="premium" id="premium">
+      <span class="premium-badge">★ Premium</span>
+      <h2>НутриАссистент Premium</h2>
+      <p>Платная версия берёт планирование на себя и помнит, что у вашей семьи реально заходит.</p>
+
+      <div class="feat">
+        <div class="feat-ic">🗓️</div>
+        <div class="feat-b"><h4>Автопланирование недели <svg class="lock" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><rect x="5" y="11" width="14" height="9" rx="2"/><path d="M8 11V8a4 4 0 0 1 8 0v3"/></svg></h4><p>Приложение само предлагает меню и список покупок по шаблонам вашей семьи.</p></div>
+      </div>
+      <div class="feat">
+        <div class="feat-ic">🔔</div>
+        <div class="feat-b"><h4>Умные напоминания <svg class="lock" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><rect x="5" y="11" width="14" height="9" rx="2"/><path d="M8 11V8a4 4 0 0 1 8 0v3"/></svg></h4><p>«Сегодня вечером достань мясо», «Илье сделай отдельную порцию», «съешьте йогурт до завтра».</p></div>
+      </div>
+      <div class="feat">
+        <div class="feat-ic">📋</div>
+        <div class="feat-b"><h4>Семейные правила <svg class="lock" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><rect x="5" y="11" width="14" height="9" rx="2"/><path d="M8 11V8a4 4 0 0 1 8 0v3"/></svg></h4><p>Будни — быстрые ужины, воскресенье — большая готовка, отдельные ограничения для ребёнка.</p></div>
+      </div>
+      <div class="feat">
+        <div class="feat-ic">📈</div>
+        <div class="feat-b"><h4>История предпочтений <svg class="lock" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><rect x="5" y="11" width="14" height="9" rx="2"/><path d="M8 11V8a4 4 0 0 1 8 0v3"/></svg></h4><p>Учится, какие блюда действительно сработали, и предлагает их чаще.</p></div>
+      </div>
+      <div class="feat">
+        <div class="feat-ic">👨‍👩‍👧</div>
+        <div class="feat-b"><h4>Совместный доступ <svg class="lock" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><rect x="5" y="11" width="14" height="9" rx="2"/><path d="M8 11V8a4 4 0 0 1 8 0v3"/></svg></h4><p>Общий список покупок и задачи — у всех в семье синхронно.</p></div>
+      </div>
+
+      <button class="premium-cta" id="premiumBtn" type="button">Попробовать Premium</button>
+      <div class="premium-foot">Демо-режим · оплата не подключена</div>
+    </div>
+  </div>
+</div>
+
+<!-- Tabbar -->
+<nav class="tabbar" role="tablist" aria-label="Разделы">
+  <div class="tabbar-inner">
+    <button class="tabbtn" data-tab="home" aria-selected="true" type="button">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M3 11l9-8 9 8"/><path d="M5 10v10h14V10"/></svg>
+      Дома
+    </button>
+    <button class="tabbtn" data-tab="plan" aria-selected="false" type="button">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="17" rx="2"/><path d="M3 9h18"/><path d="M8 2v4"/><path d="M16 2v4"/></svg>
+      План
+    </button>
+    <button class="tabbtn" data-tab="family" aria-selected="false" type="button">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><circle cx="8" cy="9" r="3"/><circle cx="17" cy="10" r="2.4"/><path d="M2.5 19a5.5 5.5 0 0 1 11 0"/><path d="M14.5 19a4 4 0 0 1 7 0"/></svg>
+      Семья
+    </button>
+    <button class="tabbtn" data-tab="shop" aria-selected="false" type="button">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M5 7h15l-1.5 9.5a2 2 0 0 1-2 1.7H8.5a2 2 0 0 1-2-1.7L5 4H2"/><circle cx="9" cy="21" r="1"/><circle cx="17" cy="21" r="1"/></svg>
+      Покупки
+    </button>
+  </div>
+</nav>
+
+<div class="toast" id="toast" role="status" aria-live="polite"></div>
+
+<script>
+(function(){
+  "use strict";
+
+  // ---------- In-memory state ----------
+  var inventory = [
+    {id:"chicken", name:"Куриное филе", emoji:"🍗", group:"Холодильник", on:true, soon:false},
+    {id:"eggs", name:"Яйца", emoji:"🥚", group:"Холодильник", on:true, soon:false},
+    {id:"yogurt", name:"Йогурт", emoji:"🥛", group:"Холодильник", on:true, soon:true},
+    {id:"cheese", name:"Сыр", emoji:"🧀", group:"Холодильник", on:true, soon:false},
+    {id:"spinach", name:"Шпинат", emoji:"🥬", group:"Холодильник", on:true, soon:true},
+    {id:"tomato", name:"Помидоры", emoji:"🍅", group:"Холодильник", on:true, soon:false},
+    {id:"carrot", name:"Морковь", emoji:"🥕", group:"Холодильник", on:true, soon:false},
+    {id:"salmon", name:"Лосось", emoji:"🐟", group:"Морозилка", on:true, soon:false},
+    {id:"beef", name:"Говядина", emoji:"🥩", group:"Морозилка", on:true, soon:false},
+    {id:"peas", name:"Зелёный горошек", emoji:"🫛", group:"Морозилка", on:true, soon:false},
+    {id:"rice", name:"Рис", emoji:"🍚", group:"Шкаф", on:true, soon:false},
+    {id:"buckwheat", name:"Гречка", emoji:"🌾", group:"Шкаф", on:true, soon:false},
+    {id:"pasta", name:"Паста", emoji:"🍝", group:"Шкаф", on:true, soon:false},
+    {id:"oil", name:"Оливковое масло", emoji:"🫒", group:"Шкаф", on:true, soon:false},
+    {id:"onion", name:"Лук", emoji:"🧅", group:"Шкаф", on:true, soon:false}
+  ];
+  var groupOrder = ["Холодильник","Морозилка","Шкаф"];
+  var groupIcon = {
+    "Холодильник":'<svg class="inv-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"><rect x="6" y="2" width="12" height="20" rx="2"/><path d="M6 10h12"/><path d="M9 5.5v2"/><path d="M9 13v2"/></svg>',
+    "Морозилка":'<svg class="inv-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"><path d="M12 2v20"/><path d="M2 12h20"/><path d="M5 5l14 14"/><path d="M19 5L5 19"/></svg>',
+    "Шкаф":'<svg class="inv-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"><rect x="4" y="3" width="16" height="18" rx="1.5"/><path d="M12 3v18"/><path d="M9 9h0.01"/><path d="M15 9h0.01"/></svg>'
+  };
+
+  var family = [
+    {id:"anna", name:"Анна", role:"мама", ava:"👩", tags:{like:["овощи","рыба"], no:["молочное"], cant:[], goal:["энергия"]}},
+    {id:"ilya", name:"Илья", role:"папа", ava:"🧔", tags:{like:["рыба","мясо"], no:["грибы"], cant:[], goal:["форма"]}},
+    {id:"misha", name:"Миша", role:"подросток", ava:"🧑", tags:{like:["сытные ужины","паста"], no:[], cant:[], goal:["рост"]}},
+    {id:"kid", name:"Лёва", role:"ребёнок", ava:"🧒", tags:{like:["мягкая еда"], no:["острое"], cant:[], goal:["спокойный сон"]}}
+  ];
+
+  // Meals reference home inventory ids. needs = to buy.
+  var allMeals = {
+    today:[
+      {id:"m1", name:"Лосось с гречкой и шпинатом", emoji:"🐟", type:"Ужин", uses:["salmon","buckwheat","spinach","oil"], needs:[{name:"Лимон", cat:"овощи"}], time:"25 мин", load:"Спокойно", plate:{veg:55,protein:25,carb:20},
+        fam:["Анне — любимая рыба и овощи","Илье — рыбу любит, грибов нет","Лёве — отдельно, без специй, мягко потушить"]},
+      {id:"m2", name:"Курица с рисом и овощами", emoji:"🍗", type:"Ужин", uses:["chicken","rice","carrot","peas","onion","oil"], needs:[{name:"Брокколи", cat:"овощи"}], time:"35 мин", load:"Средне", plate:{veg:50,protein:25,carb:25},
+        fam:["Мише — сытно, добавить двойную порцию","Лёве — мягкая курица кусочками","Анне — без сыра сверху (без молочного)"]},
+      {id:"m3", name:"Тёплый салат с яйцом и сыром", emoji:"🥗", type:"Обед", uses:["eggs","spinach","tomato","cheese","oil"], needs:[{name:"Авокадо", cat:"овощи"}], time:"15 мин", load:"Очень просто", plate:{veg:60,protein:25,carb:15},
+        fam:["Анне — сыр заменить на нут (без молочного)","Илье — добавить рыбу из морозилки","Лёве — помидоры без кожицы"]}
+    ],
+    tomorrow:[
+      {id:"t1", name:"Говядина с пастой по-домашнему", emoji:"🥩", type:"Ужин", uses:["beef","pasta","tomato","onion","oil"], needs:[{name:"Базилик", cat:"специи"},{name:"Пармезан", cat:"молочное"}], time:"40 мин", load:"Средне", plate:{veg:40,protein:30,carb:30},
+        fam:["Мише — сытный ужин, как любит","Анне — пармезан отдельно (без молочного)","Лёве — мелко нарезать, мягкий соус"]},
+      {id:"t2", name:"Омлет со шпинатом и помидорами", emoji:"🍳", type:"Завтрак", uses:["eggs","spinach","tomato","cheese"], needs:[{name:"Зелень", cat:"овощи"}], time:"12 мин", load:"Очень просто", plate:{veg:55,protein:30,carb:15},
+        fam:["Анне — без сыра","Лёве — нежный, без перца","Илье — добавить кусочки лосося"]},
+      {id:"t3", name:"Гречка с курицей и горошком", emoji:"🍚", type:"Обед", uses:["buckwheat","chicken","peas","carrot","onion"], needs:[], time:"30 мин", load:"Спокойно", plate:{veg:45,protein:30,carb:25},
+        fam:["Полностью из запасов дома — докупать ничего не нужно","Лёве — мягко разварить гречку","Мише — двойная порция"]}
+    ],
+    week:[
+      {id:"w1", name:"План на неделю: 5 ужинов из запасов", emoji:"🗓️", type:"Неделя", uses:["salmon","chicken","beef","buckwheat","rice","pasta","spinach","carrot","peas"], needs:[{name:"Брокколи", cat:"овощи"},{name:"Лимон", cat:"овощи"},{name:"Пармезан", cat:"молочное"},{name:"Йогурт-замена", cat:"молочное/замены"}], time:"≈3 ч готовки на неделю", load:"Будни — просто, воскресенье — большая готовка", plate:{veg:50,protein:25,carb:25},
+        fam:["Пн–Чт — быстрые ужины 15–30 мин","Вс — большая готовка с заготовками","Анне — везде варианты без молочного","Илье — без грибов","Лёве — отдельные мягкие порции"]}
+    ]
+  };
+
+  var period = "today";
+  var selectedMeal = { today:"m1", tomorrow:null, week:null };
+  var shopDone = {}; // key -> bool
+
+  var $ = function(s,r){return (r||document).querySelector(s);};
+  var $$ = function(s,r){return Array.prototype.slice.call((r||document).querySelectorAll(s));};
+  function esc(s){return String(s).replace(/[&<>"']/g,function(c){return {"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c];});}
+
+  var toastT;
+  function toast(msg){
+    var t=$("#toast"); t.textContent=msg; t.classList.add("show");
+    clearTimeout(toastT); toastT=setTimeout(function(){t.classList.remove("show");},2200);
+  }
+
+  // ---------- Render: inventory ----------
+  function renderInventory(){
+    var host=$("#inventory"); host.innerHTML="";
+    var onCount=0, soonCount=0;
+    groupOrder.forEach(function(g){
+      var items=inventory.filter(function(i){return i.group===g;});
+      if(!items.length) return;
+      var wrap=document.createElement("div"); wrap.className="inv-group";
+      var head='<div class="inv-head">'+(groupIcon[g]||"")+'<h3>'+esc(g)+'</h3><span class="count">'+items.filter(function(i){return i.on;}).length+' / '+items.length+'</span></div>';
+      var chips='<div class="chips">';
+      items.forEach(function(i){
+        if(i.on)onCount++; if(i.on&&i.soon)soonCount++;
+        chips+='<button type="button" class="chip'+(i.on?"":" off")+(i.on&&i.soon?" soon":"")+'" data-inv="'+i.id+'">'
+          +(i.on&&i.soon?'<span class="soon-dot" aria-hidden="true"></span>':'<span class="emoji">'+i.emoji+'</span>')
+          +'<span>'+esc(i.name)+'</span></button>';
+      });
+      chips+='<button type="button" class="chip chip-add" data-addinv="'+esc(g)+'"><span class="plus">+</span> Добавить</button>';
+      chips+='</div>';
+      wrap.innerHTML=head+chips;
+      host.appendChild(wrap);
+    });
+    $("#invSummary").textContent="дома "+onCount+" · истекает "+soonCount;
+  }
+
+  // ---------- Render: plan ----------
+  function invName(id){var x=inventory.find(function(i){return i.id===id;}); return x?x.name:id;}
+  function homeAvailable(){return inventory.filter(function(i){return i.on;}).map(function(i){return i.id;});}
+
+  function renderPlan(){
+    var host=$("#meals"); host.innerHTML="";
+    var meals=allMeals[period]||[];
+    var note={today:"3 варианта на сегодня",tomorrow:"3 варианта на завтра",week:"черновик недели — в Premium собирается автоматически"}[period];
+    $("#planNote").textContent=note;
+    var avail=homeAvailable();
+
+    meals.forEach(function(m){
+      var sel = selectedMeal[period]===m.id;
+      var usesHome = m.uses.filter(function(u){return avail.indexOf(u)>=0;});
+      var missingHome = m.uses.filter(function(u){return avail.indexOf(u)<0;});
+      var buyList = m.needs.map(function(n){return n.name;}).concat(missingHome.map(invName));
+
+      var el=document.createElement("div");
+      el.className="meal"+(sel?" sel":"");
+      el.setAttribute("data-meal",m.id);
+
+      var facts='<div class="meal-facts">'
+        +'<span class="fact"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg>'+esc(m.time)+'</span>'
+        +'<span class="fact"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><path d="M4 19h16"/><path d="M6 19V9"/><path d="M11 19V5"/><path d="M16 19v-7"/></svg>'+esc(m.load)+'</span>'
+        +'</div>';
+
+      var lines='<div class="meal-lines">'
+        +'<div class="mline"><span class="dot home"></span><span><b>Из дома:</b> '+esc(usesHome.map(invName).join(", ")||"—")+'</span></div>'
+        +'<div class="mline"><span class="dot buy"></span><span><b>Докупить:</b> '+esc(buyList.join(", ")||"ничего, всё есть")+'</span></div>'
+        +'<div class="mline"><span class="dot fam"></span><span><b>Под семью:</b> '+esc(m.fam[0])+'</span></div>'
+        +'</div>';
+
+      var detail='<div class="meal-detail">'+plateBlock(m)+'<div class="divider"></div>'
+        +'<div class="tagrow"><div class="lbl"><span class="d fam"></span>Адаптации для семьи</div><div class="meal-lines">'
+        + m.fam.map(function(f){return '<div class="mline"><span class="dot fam"></span><span>'+esc(f)+'</span></div>';}).join("")
+        +'</div></div></div>';
+
+      el.innerHTML=
+        '<div class="meal-top">'
+          +'<span class="meal-emoji" aria-hidden="true">'+m.emoji+'</span>'
+          +'<div class="meal-h"><div class="meal-mealtype">'+esc(m.type)+'</div><h3>'+esc(m.name)+'</h3></div>'
+          +'<span class="meal-pick" aria-hidden="true"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg></span>'
+        +'</div>'+facts+lines+detail;
+      host.appendChild(el);
+    });
+  }
+
+  function plateBlock(m){
+    var p=m.plate;
+    // half veg, quarter protein, quarter carb visual (fixed Harvard layout, labels reflect emphasis)
+    var svg='<svg class="plate-svg" viewBox="0 0 100 100" aria-hidden="true">'
+      +'<defs></defs>'
+      +'<path d="M50 4 A46 46 0 0 0 50 96 Z" fill="#dfe8c6"/>'        // left half veg
+      +'<path d="M50 4 A46 46 0 0 1 96 50 L50 50 Z" fill="#f0d6c2"/>' // top-right protein
+      +'<path d="M96 50 A46 46 0 0 1 50 96 L50 50 Z" fill="#f3e3c0"/>'// bottom-right carb
+      +'<circle cx="50" cy="50" r="46" fill="none" stroke="#d4c6a8" stroke-width="1.2"/>'
+      +'<line x1="50" y1="4" x2="50" y2="96" stroke="#fff" stroke-width="1.4" opacity=".7"/>'
+      +'<line x1="50" y1="50" x2="96" y2="50" stroke="#fff" stroke-width="1.4" opacity=".7"/>'
+      +'</svg>';
+    return '<div class="plate-block">'
+      +'<div class="plate-wrap"><div class="plate">'+svg+'</div></div>'
+      +'<div class="plate-legend">'
+        +'<div class="leg"><span class="sw veg"></span><span><b>Овощи и зелень</b> — половина тарелки</span></div>'
+        +'<div class="leg"><span class="sw protein"></span><span><b>Белок</b> — четверть</span></div>'
+        +'<div class="leg"><span class="sw carb"></span><span><b>Крупы/паста</b> — четверть</span></div>'
+        +'<div class="plate-note">Простой ориентир баланса. Без подсчёта калорий — только смысл.</div>'
+      +'</div>'
+    +'</div>';
+  }
+
+  // ---------- Render: family ----------
+  var tagMeta=[["like","любит","like"],["no","не ест","no"],["cant","нельзя","cant"],["goal","цель","goal"]];
+  function renderFamily(){
+    var host=$("#family"); host.innerHTML="";
+    family.forEach(function(p){
+      var rows="";
+      tagMeta.forEach(function(t){
+        var key=t[0], label=t[1], cls=t[2];
+        var tags=p.tags[key]||[];
+        rows+='<div class="tagrow"><div class="lbl"><span class="d '+cls+'"></span>'+label+'</div><div class="ftags">';
+        tags.forEach(function(tg,idx){
+          rows+='<button type="button" class="ftag '+cls+'" data-fam="'+p.id+'" data-key="'+key+'" data-idx="'+idx+'">'+esc(tg)+' <span class="x" aria-hidden="true">×</span></button>';
+        });
+        rows+='<button type="button" class="ftag ftag-add" data-famadd="'+p.id+'" data-key="'+key+'">+ добавить</button>';
+        rows+='</div></div>';
+      });
+      var el=document.createElement("div"); el.className="fam";
+      el.innerHTML='<div class="fam-top"><div class="fam-ava" aria-hidden="true">'+p.ava+'</div>'
+        +'<div><div class="fam-name">'+esc(p.name)+'</div><div class="fam-role">'+esc(p.role)+'</div></div></div>'+rows;
+      host.appendChild(el);
+    });
+  }
+
+  // ---------- Render: shopping ----------
+  var catOrder=["овощи","белок","крупы","молочное/замены","молочное","специи"];
+  var catIcon={
+    "овощи":"🥬","белок":"🐟","крупы":"🌾","молочное/замены":"🥛","молочное":"🧀","специи":"🌿"
+  };
+  function catOf(name, fallback){
+    var n=name.toLowerCase();
+    if(/лосос|рыб|курин|курица|говяд|мяс|яйц|пармезан/.test(n)) {
+      if(/пармезан|сыр|йогурт|молоч/.test(n)) return "молочное/замены";
+      return "белок";
+    }
+    if(/йогурт|сыр|пармезан|молоч|замен/.test(n)) return "молочное/замены";
+    if(/гречк|рис|паст|крупа|овсян/.test(n)) return "крупы";
+    if(/базилик|зелень|специ|перец|соль|приправ/.test(n)) return "специи";
+    if(/брокколи|лимон|авокадо|помидор|огур|морков|лук|шпинат|овощ|зелён/.test(n)) return "овощи";
+    return fallback||"овощи";
+  }
+
+  function buildShop(){
+    var meal=null, p=period;
+    var id=selectedMeal[p];
+    if(id){ meal=(allMeals[p]||[]).find(function(m){return m.id===id;}); }
+    var avail=homeAvailable();
+    var items=[];
+    if(meal){
+      meal.needs.forEach(function(n){ items.push({name:n.name, cat:n.cat||catOf(n.name)}); });
+      meal.uses.filter(function(u){return avail.indexOf(u)<0;}).forEach(function(u){
+        items.push({name:invName(u), cat:catOf(invName(u))});
+      });
+    }
+    // de-dupe by name
+    var seen={}, out=[];
+    items.forEach(function(it){ if(!seen[it.name]){seen[it.name]=1; out.push(it);} });
+    return {meal:meal, items:out};
+  }
+
+  function renderShop(){
+    var data=buildShop();
+    var host=$("#shop"); host.innerHTML="";
+    if(!data.meal){
+      host.innerHTML='<div class="shop-empty">Выберите блюдо во вкладке «План» — список соберётся сам.</div>';
+      $("#shopSummary").textContent="";
+      renderReminders(null);
+      return;
+    }
+    if(!data.items.length){
+      host.innerHTML='<div class="shop-empty">Всё уже есть дома — докупать ничего не нужно 🎉</div>';
+    } else {
+      var byCat={};
+      data.items.forEach(function(it){ (byCat[it.cat]=byCat[it.cat]||[]).push(it); });
+      var cats=Object.keys(byCat).sort(function(a,b){
+        var ia=catOrder.indexOf(a); var ib=catOrder.indexOf(b);
+        return (ia<0?99:ia)-(ib<0?99:ib);
+      });
+      var html="";
+      cats.forEach(function(c){
+        html+='<div class="shop-group"><div class="shop-head"><span class="si" aria-hidden="true" style="font-size:15px">'+(catIcon[c]||"🛒")+'</span><h3>'+esc(c)+'</h3></div><ul class="shop-list">';
+        byCat[c].forEach(function(it){
+          var key=data.meal.id+"|"+it.name;
+          var done=!!shopDone[key];
+          html+='<li class="shop-item'+(done?" done":"")+'" data-shop="'+esc(key)+'"><span class="shop-box" aria-hidden="true"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg></span><span class="shop-name">'+esc(it.name)+'</span></li>';
+        });
+        html+='</ul></div>';
+      });
+      host.innerHTML=html;
+    }
+    var total=data.items.length;
+    var done=data.items.filter(function(it){return shopDone[data.meal.id+"|"+it.name];}).length;
+    $("#shopSummary").textContent=total?(done+" / "+total+" куплено"):"";
+    renderReminders(data.meal);
+  }
+
+  function renderReminders(meal){
+    var host=$("#reminders");
+    var base=[
+      {ic:"🥩", t:"Вечером достать мясо из морозилки", b:"чтобы успело разморозиться к ужину"},
+      {ic:"🍽️", t:"Илье — отдельная порция без грибов", b:"добавляем грибы только в общую часть"},
+      {ic:"🥛", t:"Йогурт съесть до завтра", b:"срок подходит к концу"}
+    ];
+    if(meal && /лосось|омлет|салат/i.test(meal.name)){
+      base.unshift({ic:"🧒", t:"Лёве приготовить мягкую порцию", b:"без специй, потушить отдельно"});
+    }
+    host.innerHTML=base.map(function(r){
+      return '<div class="rem"><div class="rem-ic" aria-hidden="true">'+r.ic+'</div><div><b>'+esc(r.t)+'</b><div class="muted" style="margin-top:2px">'+esc(r.b)+'</div></div></div>';
+    }).join("");
+  }
+
+  // ---------- Tabs ----------
+  function switchTab(tab){
+    $$(".tabbtn").forEach(function(b){ b.setAttribute("aria-selected", b.getAttribute("data-tab")===tab?"true":"false"); });
+    var map={home:"panel-home",plan:"panel-plan",family:"panel-family",shop:"panel-shop"};
+    $$(".panel").forEach(function(p){ p.classList.remove("active"); });
+    var el=$("#"+map[tab]); if(el) el.classList.add("active");
+    // premium shown on home & plan only for a calmer shop/family
+    $("#premium").parentNode.style.display = (tab==="home"||tab==="plan")?"block":"none";
+    window.scrollTo({top:0, behavior:"smooth"});
+  }
+
+  // ---------- Events ----------
+  document.addEventListener("click", function(e){
+    var t;
+
+    if((t=e.target.closest(".tabbtn"))){ switchTab(t.getAttribute("data-tab")); return; }
+
+    if((t=e.target.closest(".mode"))){
+      var mode=t.getAttribute("data-mode");
+      if(mode==="manual"){ addInventoryPrompt("Холодильник"); }
+      else { toast("«"+t.textContent.trim().replace(/скоро$/,"").trim()+"» — скоро в Premium. В демо добавьте вручную."); }
+      return;
+    }
+
+    if((t=e.target.closest("[data-inv]"))){
+      var iid=t.getAttribute("data-inv");
+      var it=inventory.find(function(x){return x.id===iid;});
+      if(it){ it.on=!it.on; renderInventory(); renderPlan(); renderShop(); }
+      return;
+    }
+
+    if((t=e.target.closest("[data-addinv]"))){ addInventoryPrompt(t.getAttribute("data-addinv")); return; }
+
+    if((t=e.target.closest(".meal"))){
+      var mid=t.getAttribute("data-meal");
+      selectedMeal[period] = (selectedMeal[period]===mid)?null:mid;
+      renderPlan();
+      renderShop();
+      if(selectedMeal[period]) toast("Добавлено в план · список покупок обновлён");
+      return;
+    }
+
+    if((t=e.target.closest("#planSeg button"))){
+      period=t.getAttribute("data-period");
+      $$("#planSeg button").forEach(function(b){ b.setAttribute("aria-selected", b===t?"true":"false"); });
+      renderPlan(); renderShop();
+      return;
+    }
+
+    if((t=e.target.closest(".ftag[data-fam]"))){
+      var fid=t.getAttribute("data-fam"), key=t.getAttribute("data-key"), idx=+t.getAttribute("data-idx");
+      var p=family.find(function(x){return x.id===fid;});
+      if(p){ p.tags[key].splice(idx,1); renderFamily(); renderPlan(); toast("Обновили предпочтения"); }
+      return;
+    }
+
+    if((t=e.target.closest(".ftag-add[data-famadd]"))){
+      var fid2=t.getAttribute("data-famadd"), key2=t.getAttribute("data-key");
+      var label={like:"что любит",no:"что не ест",cant:"что нельзя",goal:"цель"}[key2];
+      var val=window.prompt("Добавить — "+label+":","");
+      if(val && val.trim()){
+        var pp=family.find(function(x){return x.id===fid2;});
+        pp.tags[key2].push(val.trim()); renderFamily(); renderPlan(); toast("Добавлено");
+      }
+      return;
+    }
+
+    if((t=e.target.closest(".shop-item"))){
+      var key=t.getAttribute("data-shop");
+      shopDone[key]=!shopDone[key];
+      renderShop();
+      return;
+    }
+
+    if(e.target.closest("#premiumBtn")){ toast("Premium — демо. Оплата в этой версии не подключена."); return; }
+    if(e.target.closest("#demoBtn")){ toast("Демо-семья из 4 человек · все данные только в памяти"); return; }
+  });
+
+  function addInventoryPrompt(group){
+    var val=window.prompt("Добавить продукт в «"+group+"»:","");
+    if(val && val.trim()){
+      var id="x"+(Date.now());
+      inventory.push({id:id, name:val.trim(), emoji:"🧺", group:group, on:true, soon:false});
+      renderInventory(); renderPlan(); renderShop();
+      toast("Добавлено: "+val.trim());
+    }
+  }
+
+  // ---------- Init ----------
+  renderInventory();
+  renderPlan();
+  renderFamily();
+  renderShop();
+  switchTab("home");
+
+  // splash
+  window.addEventListener("load", function(){
+    var splash=$("#splash");
+    var reduce = window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    setTimeout(function(){
+      if(!splash) return;
+      splash.setAttribute("aria-hidden","true");
+      setTimeout(function(){ if(splash.parentNode) splash.parentNode.removeChild(splash); }, reduce?180:650);
+    }, reduce?250:1100);
+  });
+
+})();
+</script>
+</body>
+</html>
